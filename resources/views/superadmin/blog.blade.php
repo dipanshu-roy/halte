@@ -18,7 +18,7 @@
                                     <label class="col-sm-2 col-form-label">Title</label>
                                     <div class="col-sm-10">
                                         <div class="form-group bmd-form-group textarea">
-                                            <input name="title" class="form-control" type="text" value="@if(!empty($updateBlog->title)){{$updateBlog->title}}@endif">
+                                            <input name="title" maxlength="100" class="form-control" type="text" value="@if(!empty($updateBlog->title)){{$updateBlog->title}}@endif">
                                             <input type="hidden" name="id" value="@if(!empty($updateBlog->id)){{$updateBlog->id}}@endif">
                                         </div>
                                     </div>
@@ -35,7 +35,12 @@
                                     <label class="col-sm-2 col-form-label">Image</label>
                                     <div class="col-sm-10">
                                         <div class="form-group bmd-form-group textarea">
-                                            <input name="image" id="" class="form-control" type="file" value="@if(!empty($updateBlog->image)){{$updateBlog->image}}@endif">
+                                            <input name="image" id="image" class="form-control" type="file" value="@if(!empty($updateBlog->image)){{$updateBlog->image}}@endif">
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <a href="#" class="img-remove-thumb"> @if(!empty($updateBlog->image))<i class="fa fa-times" onclick="romeve_image()"></i><img id="blah" src="{{asset($updateBlog->image)}}" alt="" width="100" class="img-thumbnail"> @endif</a>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -62,7 +67,7 @@
                             <div class="col-md-12">
 
                                 <div class="table-responsive">
-                                <table id="example" class="display" style="width:100%">
+                                    <table id="example" class="display" style="width:100%">
                                         <thead class="text-primary">
                                             <tr> 
                                                 <th>S. No.</th>
@@ -103,5 +108,26 @@
             </div>
         </div>
     </div>
-
+    @push('script')
+    <script>
+        function romeve_image(){
+            $(".img-remove-thumb").empty();
+            $("#image").val('');
+        }
+    </script>
+    <script>
+        $(document).ready(() => {
+            $("#image").change(function () {
+                const file = this.files[0];
+                if (file) {
+                    let reader = new FileReader();
+                    reader.onload = function (event) {
+                        $(".img-remove-thumb").html('<i class="fa fa-times" onclick="romeve_image()"></i><img src="'+event.target.result+'" width="100" class="img-thumbnail">');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
+    </script>
+    @endpush
 @endsection('content')

@@ -8,6 +8,7 @@ use App\Models\ProductSubCategory;
 use App\Models\ProductCategory;
 use App\Models\ProductFeature;
 use App\Models\ProductFeatureDetail;
+use App\Models\ProductSpecifications;
 use App\Models\Product;
 use App\Models\User;
 use App\Models\Brand;
@@ -36,7 +37,7 @@ class ProductController extends Controller
                 $extension = $request->logo->getClientOriginalExtension();
                 $fileNameToStore = 'brands'.time().'.'.$extension;
                 $assetUrl = $request->logo->move('public/brand/',$fileNameToStore);
-                $brand->logo = $assetUrl;
+                $brand->logo = 'brand/'.$fileNameToStore;
             }
             $brand->user_id = Auth::user()->id;
             $brand->save();
@@ -51,7 +52,7 @@ class ProductController extends Controller
                     $extension = $request->logo->getClientOriginalExtension();
                     $fileNameToStore = 'brands'.time().'.'.$extension;
                     $assetUrl = $request->logo->move('public/brand/',$fileNameToStore);
-                    $brand->logo = $assetUrl;
+                    $brand->logo = 'brand/'.$fileNameToStore;
                 }
                 $brand->user_id = Auth::user()->id;
                 $brand->save();
@@ -86,8 +87,8 @@ class ProductController extends Controller
             if($request->file('banner_image')){
                 $extension = $request->banner_image->getClientOriginalExtension();
                 $fileNameToStore = 'brands'.time().'.'.$extension;
-                $assetUrl = $request->banner_image->move('public/template/',$fileNameToStore);
-                $product->banner_image = $assetUrl;
+                $assetUrl = $request->banner_image->move('public/category/',$fileNameToStore);
+                $product->banner_image = 'category/'.$fileNameToStore;
             }
             $product->page_title = $request->page_title;
             $product->page_description = $request->page_description;
@@ -103,8 +104,8 @@ class ProductController extends Controller
                 if($request->file('banner_image')){
                     $extension = $request->banner_image->getClientOriginalExtension();
                     $fileNameToStore = 'brands'.time().'.'.$extension;
-                    $assetUrl = $request->banner_image->move('public/template/',$fileNameToStore);
-                    $product->banner_image = $assetUrl;
+                    $assetUrl = $request->banner_image->move('public/category/',$fileNameToStore);
+                    $product->banner_image = 'category/'.$fileNameToStore;
                 }
                 $product->page_title = $request->page_title;
                 $product->page_description = $request->page_description;
@@ -143,8 +144,8 @@ class ProductController extends Controller
             if($request->file('banner_image')){
                 $extension = $request->banner_image->getClientOriginalExtension();
                 $fileNameToStore = 'brands'.time().'.'.$extension;
-                $assetUrl = $request->banner_image->move('public/template/',$fileNameToStore);
-                $product->banner_image = $assetUrl;
+                $assetUrl = $request->banner_image->move('public/sub_category/',$fileNameToStore);
+                $product->banner_image = 'sub_category/'.$fileNameToStore;
             }
             $product->page_title = $request->page_title;
             $product->page_description = $request->page_description;
@@ -161,8 +162,8 @@ class ProductController extends Controller
                 if($request->file('banner_image')){
                     $extension = $request->banner_image->getClientOriginalExtension();
                     $fileNameToStore = 'brands'.time().'.'.$extension;
-                    $assetUrl = $request->banner_image->move('public/template/',$fileNameToStore);
-                    $product->banner_image = $assetUrl;
+                    $assetUrl = $request->banner_image->move('public/sub_category/',$fileNameToStore);
+                    $product->banner_image = 'sub_category/'.$fileNameToStore;
                 }
                 $product->page_title = $request->page_title;
                 $product->page_description = $request->page_description;
@@ -251,6 +252,7 @@ class ProductController extends Controller
                 $product->save();
                 if(!empty($product->id)){
                     $this->ProductFeatureFun($product->id,$request,$users);
+                    $this->ProductSpecification($product->id,$request,$users);
                 }
                 return redirect('admin/product/add-product')->with('success','Saved successfully');
             }
@@ -318,5 +320,28 @@ class ProductController extends Controller
                 $product_feature_detail->save();
             }
         }
+    }
+    public function ProductSpecification($pro_id,$request,$users){
+        $productSpecifications = new ProductSpecifications();
+            $productSpecifications->user_id = $users->id;
+            $productSpecifications->product_id = $pro_id;
+            $productSpecifications->sku = $request->sku;
+            $productSpecifications->material = $request->material;
+            $productSpecifications->style = $request->style;
+            $productSpecifications->cutting_width = $request->cutting_width;
+            $productSpecifications->country_of_origin = $request->country_of_origin;
+            $productSpecifications->specification_title = $request->specification_title;
+            $productSpecifications->power_source = $request->power_source;
+            $productSpecifications->colour = $request->colour;
+            $productSpecifications->item_weight = $request->item_weight;
+            $productSpecifications->number_of_positions = $request->number_of_positions;
+            $productSpecifications->product_dimensions = $request->product_dimensions;
+            $productSpecifications->specification_value = $request->specification_value;
+            $productSpecifications->additional_information = $request->additional_information;
+            $productSpecifications->save();
+    }
+    public function ViewProduct(Request $request){
+        $viewProduct = DB::select("SELECT a.id,a.product_name,a.main_image,a.mrps,a.sale_price,b.barnd_name,c.category_name,d.subcategory_name,e.sku FROM `products` as a LEFT JOIN brands as b on a.brand_id=b.id LEFT JOIN product_categories as c on a.category_id=c.id LEFT JOIN product_sub_categories as d on a.subcategory_id=d.id LEFT JOIN product_specifications as e on a.id=e.product_id");
+        return view('superadmin/product/view_product',compact('viewProduct'));
     }
 }

@@ -1464,7 +1464,7 @@ font-size: 1.2rem;
 border-bottom: 1px solid #ddd;
 }
 .other-filter li i{
-float: right;
+float: left;
 display: inline-block;
 padding-top: 3px;
 }
@@ -4789,4 +4789,7 @@ padding: 20px
 }
 .form-control:focus{
 box-shadow: none;
+}
+.mr-2{
+  margin-right: 0.5rem!important; 
 }

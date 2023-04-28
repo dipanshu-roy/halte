@@ -100,7 +100,7 @@
                                 </li>
 
                                 <li class="nav-item ">
-                                    <a class="nav-link" href="view-product.html">
+                                    <a class="nav-link" href="{{url('admin/product/view-product')}}">
                                         <span class="sidebar-mini"> </span>
                                         <span class="sidebar-normal">View Products</span>
                                     </a>

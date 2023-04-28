@@ -5,15 +5,26 @@
 		<div class="carousel slide">
 			<div class="carousel-inner">
 				<div class="container-fluid xl:w-auto">
-					<div class="item active" style="background-image: url({{asset('web/images/banner1.jpg')}}); background-position: top center;">
+                    @if(!empty($selected_subcategories))
+                        <div class="item active" style="background-image: url('{{asset($selected_subcategories->banner_image)}}'); background-position: top center;">
+                    @else
+					    <div class="item active" style="background-image: url('{{asset('web/images/banner1.jpg')}}'); background-position: top center;">
+                    @endif
 						<div class="carousel-content">
 							<div class="container plr0md fw xs-plr60">
 								<div class="col-sm-12">
 									<ul class="breadcrumb">
 										<li><a href="index.html">Home</a></li>
-										<li><a href="#">{{ucfirst(Request::segment(1))}}</a></li>
+                                        @if(Request::segment(3))
+										    <li><a href="#">{{ucfirst(Request::segment(2))}}</a></li>
+                                        @else
+										    <li><a href="#">{{ucfirst(Request::segment(1))}}</a></li>
+                                        @endif
                                         @if(!empty($selected_brand))
 										    <li><a href="#">{{ucfirst($selected_brand->barnd_name)}}</a></li>
+                                        @endif
+                                        @if(!empty($selected_subcategories))
+										    <li><a href="#">{{ucfirst($selected_subcategories->subcategory_name)}}</a></li>
                                         @endif
 									</ul>
 								</div>
@@ -34,59 +45,22 @@
 						<h4 class="fltr_tp1 hn-sm">Shop by</h4>
 						<a class="vs-sm btn btn-shpby btn-clpsbl collapsed" data-toggle="collapse" data-target="#nav-category" href="javascript:void(0);">Shop by <i class="fa arrow fa-caret-down"></i> </a>
 						<div id="nav-category" class="sub-cat">
-							<div class="lblctr hn-sm">Category</div>
-							<a class="vs-sm btn btn-catgs btn-clpsbl collapsed" data-toggle="collapse" data-target="#nav-sub-category-1" href="javascript:void(0);">Category <i class="fa arrow fa-caret-down"></i> </a>
+							<a class="lblctr mrt20 hn-sm">Category</a>
+							<div class=""></div>
+							<a class="vs-sm btn btn-catgs btn-clpsbl collapsed" data-toggle="collapse" data-target="#nav-sub-category-1" href="javascript:void(0);"> Brands <i class="fa arrow fa-caret-down"></i> </a>
 							<div id="nav-sub-category-1" class="sub-cat">
-								<div id="tree" class="cat_lft">
-									<ul id="treeData" style="display: none;">
-										<li class="folder"><a href="#">Lawn &amp; Garden</a>
-											<ul>
-												<li><a href="#">Brush Cutter</a></li>
-												<li><a href="#">Garden Tools &amp; Accessories</a></li>
-												<li><a href="#">Fancy Garden Pots</a></li>
-												<li><a href="#">Joints &amp; Accessories</a></li>
-												<li><a href="#">Lawn Mowers</a></li>
-												<li><a href="#">Leaf Blower</a></li>
-												<li><a href="#">Solar Lights</a></li>
-												<li><a href="#">Manual Sprayers</a></li>
-												<li><a href="#">Spray Guns</a></li>
-												<li><a href="#">Chainsaws</a></li>
-												<li><a href="#">Garden Sprinklers</a></li>
-												<li><a href="#">Water Cans</a></li>
-												<li><a href="#">Garden Pipes and Hose Reels</a></li>
-												<li><a href="#">Hedge Trimmers</a></li>
-												<li><a href="#">Plants &amp; Seeds</a></li>
+								<ul class="other-filter mrt0">
+                                    @if(!empty($categories)) @foreach($categories as $cat)
+                                        <li><a href="#{{$cat->category_slug}}" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle collapsed"><i class="fa fa-caret-right mr-2"></i> {{$cat->category_name}}</a>
+                                            <ul class="collapse list-unstyled" id="{{$cat->category_slug}}">
+                                                @php $sub_categories = App\Models\ProductSubCategory::select('subcategory_name','subcategory_slug','banner_image')->where('category_id',$cat->id)->get();@endphp
+                                                @if(!empty($sub_categories)) @foreach($sub_categories as $subcat)
+												    <li><a class="anchortag" href="{{url('ct/'.$cat->category_slug.'/'.$subcat->subcategory_slug)}}">{{$subcat->subcategory_name}}</a></li>
+                                                @endforeach @endif
 											</ul>
-										</li>
-										<li class="folder"><a href="index.html">Travel</a>
-											<ul>
-												<li><a href="#">Road Trip &amp; Camping</a></li>
-												<li><a href="#">Car Washers</a></li>
-												<li><a href="#">Car Chargers &amp; Wires</a></li>
-												<li><a href="#">Air Pumps &amp; Compressors</a></li>
-												<li><a href="#">Air Freshners</a></li>
-												<li><a href="#">Car Care</a></li>
-												<li><a href="#">Car Accessories</a></li>
-												<li><a href="#">Vacuum Cleaners</a></li>
-												<li><a href="#">Car Tools &amp; Jack</a></li>
-												<li><a href="#">Snow Chains</a></li>
-											</ul>
-										</li>
-										<li class="folder"><a href="#">Engineering</a>
-											<ul>
-												<li><a href="#">Adhesive &amp; Sealants</a></li>
-												<li><a href="#">Toolkits</a></li>
-												<li><a href="#">Power Tool</a></li>
-												<li><a href="#">High Pressure Washers</a></li>
-												<li><a href="#">Maintenance</a></li>
-												<li><a href="#">Hand Tools</a></li>
-												<li><a href="#">Measuring Instruments</a></li>
-												<li><a href="#">Construction</a></li>
-												<li><a href="#">Workshop</a></li>
-											</ul>
-										</li>
-									</ul>
-								</div>
+                                        </li>
+                                    @endforeach @endif
+								</ul>
 							</div>
 							<a class="lblctr mrt20 hn-sm">Brands</a>
 							<div class=""></div>
@@ -115,64 +89,14 @@
 				<div class="col-sm-12">
 					<div class="prod-sub-cat-pg">
 						<ul class="prod-subcat-sldr">
-							<li><a href="#">
-									<img src="images/sub-category1.png" alt="">
-									<span>Brush Cutter </span>
+							@php $sub_categories_slid = App\Models\ProductSubCategory::select('subcategory_name','subcategory_slug','banner_image')->get();@endphp
+							@if(!empty($sub_categories_slid)) @foreach($sub_categories_slid as $subcat)
+							<li>
+                                <a href="#"><img src="{{asset($subcat->banner_image)}}" alt="{{$subcat->subcategory_name}}">
+									<span>{{$subcat->subcategory_name}}</span>
 								</a>
 							</li>
-
-							<li><a href="#">
-									<img src="images/sub-category2.png" alt="">
-									<span>Garden Tools &amp; Accessories</span>
-								</a>
-							</li>
-
-							<li><a href="#">
-									<img src="images/sub-category3.png" alt="">
-									<span>Fancy Garden Pots</span>
-								</a>
-							</li>
-
-							<li><a href="#">
-									<img src="images/sub-category4.png" alt="">
-									<span>Joints &amp; Accessories</span>
-								</a>
-							</li>
-
-							<li><a href="#">
-									<img src="images/sub-category5.png" alt="">
-									<span>Lawn Mowers</span>
-								</a>
-							</li>
-
-							<li><a href="#">
-									<img src="images/sub-category6.png" alt="">
-
-									<span>Leaf Blower</span>
-								</a>
-							</li>
-
-							<li><a href="#">
-									<img src="images/sub-category1.png" alt="">
-									<span>Solar Lights</span>
-								</a></li>
-
-							<li><a href="#">
-									<img src="images/sub-category2.png" alt="">
-									<span>Solar Lights</span>
-								</a></li>
-
-							<li><a href="#">
-									<img src="images/sub-category3.png" alt="">
-									<span>Solar Lights</span>
-								</a></li>
-
-							<li><a href="#">
-									<img src="images/sub-category4.png" alt="">
-									<span>Solar Lights</span>
-								</a></li>
-
-
+							@endforeach @endif
 						</ul>
 					</div>
 				</div>
@@ -182,27 +106,27 @@
 
 
 				<div class="col-sm-12">
-					<div class="ofr-cat-sldr vs-lg">
+					<div class="ofr-sldr vs-lg">
 						<div>
 							<a href="#">
-								<img src="images/banner-category1.jpg" class="imve ofr-lg">
-								<img src="images/banner-product-mobile.jpg" class="imve ofr-xs">
+								<img src="{{asset('web/images/banner-category1.jpg')}}" class="imve ofr-lg">
+								<img src="{{asset('web/images/banner-product-mobile.jpg')}}" class="imve ofr-xs">
 							</a>
 						</div>
 						<div>
-							<a href="#"><img src="images/banner-category2.jpg" class="imve ofr-lg">
-								<img src="images/banner-product-mobile2.jpg" class="imve ofr-xs">
+							<a href="#"><img src="{{asset('web/images/banner-category2.jpg')}}" class="imve ofr-lg">
+								<img src="{{asset('web/images/banner-product-mobile2.jpg')}}" class="imve ofr-xs">
 
 							</a>
 						</div>
 						<div>
-							<a href="#"><img src="images/banner-category1.jpg" class="imve ofr-lg">
-								<img src="images/banner-product-mobile.jpg" class="imve ofr-xs">
+							<a href="#"><img src="{{asset('web/images/banner-category1.jpg')}}" class="imve ofr-lg">
+								<img src="{{asset('web/images/banner-product-mobile.jpg')}}" class="imve ofr-xs">
 							</a>
 						</div>
 						<div>
-							<a href="#"><img src="images/banner-category2.jpg" class="imve ofr-lg">
-								<img src="images/banner-product-mobile2.jpg" class="imve ofr-xs">
+							<a href="#"><img src="{{asset('web/images/banner-category2.jpg')}}" class="imve ofr-lg">
+								<img src="{{asset('web/images/banner-product-mobile2.jpg')}}" class="imve ofr-xs">
 							</a>
 						</div>
 
@@ -244,7 +168,7 @@
 							<div class="prd-cntr">
 								<a href="product-page.html">
 									<div class="pro-im">
-										<img src="images/product-hm1.jpg" class="">
+										<img src="{{asset('web/images/product-hm1.jpg')}}" class="">
 									</div>
 									<div class="prod-card-price">
 										<div class="bndl-prod-price-sale"><i class="fa fa-inr"></i> 3,349</div>
@@ -268,7 +192,7 @@
 							<div class="prd-cntr">
 								<a href="product-page.html">
 									<div class="pro-im">
-										<img src="images/product-hm2.jpg" class="">
+										<img src="{{asset('web/images/product-hm2.jpg')}}" class="">
 									</div>
 									<div class="prod-card-price">
 										<div class="bndl-prod-price-sale"><i class="fa fa-inr"></i> 3,349</div>
@@ -292,7 +216,7 @@
 							<div class="prd-cntr">
 								<a href="product-page.html">
 									<div class="pro-im">
-										<img src="images/product-hm3.jpg" class="">
+										<img src="{{asset('web/images/product-hm3.jpg')}}" class="">
 									</div>
 									<div class="prod-card-price">
 										<div class="bndl-prod-price-sale"><i class="fa fa-inr"></i> 3,349</div>
@@ -316,7 +240,7 @@
 							<div class="prd-cntr">
 								<a href="product-page.html">
 									<div class="pro-im">
-										<img src="images/product-hm4.jpg" class="">
+										<img src="{{asset('web/images/product-hm4.jpg')}}" class="">
 									</div>
 									<div class="prod-card-price">
 										<div class="bndl-prod-price-sale"><i class="fa fa-inr"></i> 3,349</div>
@@ -341,7 +265,7 @@
 							<div class="prd-cntr">
 								<a href="product-page.html">
 									<div class="pro-im">
-										<img src="images/product-hm5.jpg" class="">
+										<img src="{{asset('web/images/product-hm5.jpg')}}" class="">
 									</div>
 									<div class="prod-card-price">
 										<div class="bndl-prod-price-sale"><i class="fa fa-inr"></i> 3,349</div>
@@ -366,7 +290,7 @@
 							<div class="prd-cntr">
 								<a href="product-page.html">
 									<div class="pro-im">
-										<img src="images/product-hm6.jpg" class="">
+										<img src="{{asset('web/images/product-hm6.jpg')}}" class="">
 									</div>
 									<div class="prod-card-price">
 										<div class="bndl-prod-price-sale"><i class="fa fa-inr"></i> 3,349</div>
@@ -390,7 +314,7 @@
 							<div class="prd-cntr">
 								<a href="product-page.html">
 									<div class="pro-im">
-										<img src="images/product-hm7.jpg" class="">
+										<img src="{{asset('web/images/product-hm7.jpg')}}" class="">
 									</div>
 									<div class="prod-card-price">
 										<div class="bndl-prod-price-sale"><i class="fa fa-inr"></i> 3,349</div>
@@ -414,7 +338,7 @@
 							<div class="prd-cntr">
 								<a href="product-page.html">
 									<div class="pro-im">
-										<img src="images/product-hm8.jpg" class="">
+										<img src="{{asset('web/images/product-hm8.jpg')}}" class="">
 									</div>
 									<div class="prod-card-price">
 										<div class="bndl-prod-price-sale"><i class="fa fa-inr"></i> 3,349</div>
@@ -439,7 +363,7 @@
 							<div class="prd-cntr">
 								<a href="product-page.html">
 									<div class="pro-im">
-										<img src="images/product-hm1.jpg" class="">
+										<img src="{{asset('web/images/product-hm1.jpg')}}" class="">
 									</div>
 									<div class="prod-card-price">
 										<div class="bndl-prod-price-sale"><i class="fa fa-inr"></i> 3,349</div>
@@ -463,7 +387,7 @@
 							<div class="prd-cntr">
 								<a href="product-page.html">
 									<div class="pro-im">
-										<img src="images/product-hm5.jpg" class="">
+										<img src="{{asset('web/images/product-hm5.jpg')}}" class="">
 									</div>
 									<div class="prod-card-price">
 										<div class="bndl-prod-price-sale"><i class="fa fa-inr"></i> 3,349</div>
@@ -488,7 +412,7 @@
 							<div class="prd-cntr">
 								<a href="product-page.html">
 									<div class="pro-im">
-										<img src="images/product-hm6.jpg" class="">
+										<img src="{{asset('web/images/product-hm6.jpg')}}" class="">
 									</div>
 									<div class="prod-card-price">
 										<div class="bndl-prod-price-sale"><i class="fa fa-inr"></i> 3,349</div>
@@ -512,7 +436,7 @@
 							<div class="prd-cntr">
 								<a href="product-page.html">
 									<div class="pro-im">
-										<img src="images/product-hm7.jpg" class="">
+										<img src="{{asset('web/images/product-hm7.jpg')}}" class="">
 									</div>
 									<div class="prod-card-price">
 										<div class="bndl-prod-price-sale"><i class="fa fa-inr"></i> 3,349</div>
@@ -536,7 +460,7 @@
 							<div class="prd-cntr">
 								<a href="product-page.html">
 									<div class="pro-im">
-										<img src="images/product-hm8.jpg" class="">
+										<img src="{{asset('web/images/product-hm8.jpg')}}" class="">
 									</div>
 									<div class="prod-card-price">
 										<div class="bndl-prod-price-sale"><i class="fa fa-inr"></i> 3,349</div>
@@ -561,7 +485,7 @@
 							<div class="prd-cntr">
 								<a href="product-page.html">
 									<div class="pro-im">
-										<img src="images/product-hm1.jpg" class="">
+										<img src="{{asset('web/images/product-hm1.jpg')}}" class="">
 									</div>
 									<div class="prod-card-price">
 										<div class="bndl-prod-price-sale"><i class="fa fa-inr"></i> 3,349</div>
@@ -585,7 +509,7 @@
 							<div class="prd-cntr">
 								<a href="product-page.html">
 									<div class="pro-im">
-										<img src="images/product-hm5.jpg" class="">
+										<img src="{{asset('web/images/product-hm5.jpg')}}" class="">
 									</div>
 									<div class="prod-card-price">
 										<div class="bndl-prod-price-sale"><i class="fa fa-inr"></i> 3,349</div>
@@ -610,7 +534,7 @@
 							<div class="prd-cntr">
 								<a href="product-page.html">
 									<div class="pro-im">
-										<img src="images/product-hm6.jpg" class="">
+										<img src="{{asset('web/images/product-hm6.jpg')}}" class="">
 									</div>
 									<div class="prod-card-price">
 										<div class="bndl-prod-price-sale"><i class="fa fa-inr"></i> 3,349</div>
@@ -635,7 +559,7 @@
 							<div class="prd-cntr">
 								<a href="product-page.html">
 									<div class="pro-im">
-										<img src="images/product-hm7.jpg" class="">
+										<img src="{{asset('web/images/product-hm7.jpg')}}" class="">
 									</div>
 									<div class="prod-card-price">
 										<div class="bndl-prod-price-sale"><i class="fa fa-inr"></i> 3,349</div>
@@ -659,7 +583,7 @@
 							<div class="prd-cntr">
 								<a href="product-page.html">
 									<div class="pro-im">
-										<img src="images/product-hm8.jpg" class="">
+										<img src="{{asset('web/images/product-hm8.jpg')}}" class="">
 									</div>
 									<div class="prod-card-price">
 										<div class="bndl-prod-price-sale"><i class="fa fa-inr"></i> 3,349</div>
@@ -684,7 +608,7 @@
 							<div class="prd-cntr">
 								<a href="product-page.html">
 									<div class="pro-im">
-										<img src="images/product-hm1.jpg" class="">
+										<img src="{{asset('web/images/product-hm1.jpg')}}" class="">
 									</div>
 									<div class="prod-card-price">
 										<div class="bndl-prod-price-sale"><i class="fa fa-inr"></i> 3,349</div>
@@ -709,7 +633,7 @@
 							<div class="prd-cntr">
 								<a href="product-page.html">
 									<div class="pro-im">
-										<img src="images/product-hm5.jpg" class="">
+										<img src="{{asset('web/images/product-hm5.jpg')}}" class="">
 									</div>
 									<div class="prod-card-price">
 										<div class="bndl-prod-price-sale"><i class="fa fa-inr"></i> 3,349</div>
@@ -746,23 +670,23 @@
 		<div class="ofr-cat-sldr vs-sm-b">
 			<div>
 				<a href="#">
-					<img src="images/banner-category1.jpg" class="imve ofr-lg">
-					<img src="images/banner-product-mobile.jpg" class="imve ofr-xs">
+					<img src="{{asset('web/images/banner-category1.jpg')}}" class="imve ofr-lg">
+					<img src="{{asset('web/images/banner-product-mobile.jpg')}}" class="imve ofr-xs">
 				</a>
 			</div>
 			<div>
-				<a href="#"><img src="images/banner-category2.jpg" class="imve ofr-lg">
-					<img src="images/banner-product-mobile2.jpg" class="imve ofr-xs">
+				<a href="#"><img src="{{asset('web/images/banner-category2.jpg')}}" class="imve ofr-lg">
+					<img src="{{asset('web/images/banner-product-mobile2.jpg')}}" class="imve ofr-xs">
 				</a>
 			</div>
 			<div>
-				<a href="#"><img src="images/banner-category1.jpg" class="imve ofr-lg">
-					<img src="images/banner-product-mobile.jpg" class="imve ofr-xs">
+				<a href="#"><img src="{{asset('web/images/banner-category1.jpg')}}" class="imve ofr-lg">
+					<img src="{{asset('web/images/banner-product-mobile.jpg')}}" class="imve ofr-xs">
 				</a>
 			</div>
 			<div>
-				<a href="#"><img src="images/banner-category2.jpg" class="imve ofr-lg">
-					<img src="images/banner-product-mobile2.jpg" class="imve ofr-xs">
+				<a href="#"><img src="{{asset('web/images/banner-category2.jpg')}}" class="imve ofr-lg">
+					<img src="{{asset('web/images/banner-product-mobile2.jpg')}}" class="imve ofr-xs">
 				</a>
 			</div>
 		</div>

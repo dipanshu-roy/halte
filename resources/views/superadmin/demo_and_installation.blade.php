@@ -27,12 +27,12 @@
                                     <label class="col-sm-2 col-form-label">Image</label>
                                     <div class="col-sm-10">
                                         <div class="form-group bmd-form-group textarea">
-                                            <input name="image" id="" class="form-control" type="file" value="">
-                                            @if(isset($demoInstaPageCont->image))
-                                            <img src="{{asset($demoInstaPageCont->image)}}" height="100" width="100"></img>
-                                            @else
-                                            <img src="{{ asset('admin/img/vue.png') }}" height="100" width="100"></img>
-                                            @endif
+                                            <input name="image" id="image" class="form-control" type="file" value="">
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <a href="#" class="img-remove-thumb"> @if(!empty($demoInstaPageCont->image))<i class="fa fa-times" onclick="romeve_image()"></i><img id="blah" src="{{asset($demoInstaPageCont->image)}}" alt="" width="100" class="img-thumbnail"> @endif</a>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -58,7 +58,7 @@
                                     <label class="col-sm-2 col-form-label">Keywords</label>
                                     <div class="col-sm-10">
                                         <div class="form-group bmd-form-group textarea">
-                                            <input name="keyword" class="form-control" type="text" value="@if(!empty($demoInstaPageCont->keyword)){{$demoInstaPageCont->keyword}}@endif">
+                                            <input name="keyword" maxlength="100" class="form-control" type="text" value="@if(!empty($demoInstaPageCont->keyword)){{$demoInstaPageCont->keyword}}@endif">
                                             <p class="small">For SEO</p>
                                         </div>
                                     </div>
@@ -79,5 +79,26 @@
             </div>
         </div>
     </div>
-
+    @push('script')
+    <script>
+        function romeve_image(){
+            $(".img-remove-thumb").empty();
+            $("#image").val('');
+        }
+    </script>
+    <script>
+        $(document).ready(() => {
+            $("#image").change(function () {
+                const file = this.files[0];
+                if (file) {
+                    let reader = new FileReader();
+                    reader.onload = function (event) {
+                        $(".img-remove-thumb").html('<i class="fa fa-times" onclick="romeve_image()"></i><img src="'+event.target.result+'" width="100" class="img-thumbnail">');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
+    </script>
+    @endpush
 @endsection('content')

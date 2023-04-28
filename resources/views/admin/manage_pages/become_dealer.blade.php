@@ -27,7 +27,7 @@
                                     <label class="col-sm-2 col-form-label">Page Title</label>
                                     <div class="col-sm-10">
                                         <div class="form-group bmd-form-group textarea">
-                                            <input name="page_title" class="form-control" type="text" value="@if(!empty($BDealerPageContent->page_title)){{$BDealerPageContent->page_title}}@endif">
+                                            <input name="page_title" class="form-control" maxlength="50" type="text" value="@if(!empty($BDealerPageContent->page_title)){{$BDealerPageContent->page_title}}@endif">
                                             <p class="small">For SEO</p>
                                         </div>
                                     </div>
@@ -45,7 +45,7 @@
                                     <label class="col-sm-2 col-form-label">Keywords</label>
                                     <div class="col-sm-10">
                                         <div class="form-group bmd-form-group textarea">
-                                            <input name="keyword" class="form-control" type="text" value="@if(!empty($BDealerPageContent->keyword)){{$BDealerPageContent->keyword}}@endif">
+                                            <input name="keyword" class="form-control" maxlength="100" type="text" value="@if(!empty($BDealerPageContent->keyword)){{$BDealerPageContent->keyword}}@endif">
                                             <p class="small">For SEO</p>
                                         </div>
                                     </div>

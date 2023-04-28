@@ -280,7 +280,7 @@
                                                                 <label class="col-sm-4 col-form-label">SKU</label>
                                                                 <div class="col-sm-7">
                                                                     <div class="form-group bmd-form-group textarea">
-                                                                        <input name="" id="" class="form-control" type="text" value="">
+                                                                        <input name="sku" id="" class="form-control" type="text" value="">
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -290,7 +290,7 @@
                                                                 <label class="col-sm-5 col-form-label">Power Source </label>
                                                                 <div class="col-sm-7">
                                                                     <div class="form-group bmd-form-group textarea">
-                                                                        <input name="" id="" class="form-control" type="text" value="">
+                                                                        <input name="power_source" id="" class="form-control" type="text" value="">
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -302,7 +302,7 @@
                                                                 <label class="col-sm-4 col-form-label">Material</label>
                                                                 <div class="col-sm-7">
                                                                     <div class="form-group bmd-form-group textarea">
-                                                                        <input name="" id="" class="form-control" type="text" value="">
+                                                                        <input name="material" id="" class="form-control" type="text" value="">
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -312,7 +312,7 @@
                                                                 <label class="col-sm-5 col-form-label">Colour</label>
                                                                 <div class="col-sm-7">
                                                                     <div class="form-group bmd-form-group textarea">
-                                                                        <input name="" id="" class="form-control" type="text" value="">
+                                                                        <input name="colour" id="" class="form-control" type="text" value="">
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -324,7 +324,7 @@
                                                                 <label class="col-sm-4 col-form-label">Style</label>
                                                                 <div class="col-sm-7">
                                                                     <div class="form-group bmd-form-group textarea">
-                                                                        <input name="" id="" class="form-control" type="text" value="">
+                                                                        <input name="style" id="" class="form-control" type="text" value="">
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -334,7 +334,7 @@
                                                                 <label class="col-sm-5 col-form-label">Item Weight </label>
                                                                 <div class="col-sm-7">
                                                                     <div class="form-group bmd-form-group textarea">
-                                                                        <input name="" id="" class="form-control" type="text" value="">
+                                                                        <input name="item_weight" id="" class="form-control" type="text" value="">
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -346,7 +346,7 @@
                                                                 <label class="col-sm-4 col-form-label">Cutting Width </label>
                                                                 <div class="col-sm-7">
                                                                     <div class="form-group bmd-form-group textarea">
-                                                                        <input name="" id="" class="form-control" type="text" value="">
+                                                                        <input name="cutting_width" id="" class="form-control" type="text" value="">
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -356,7 +356,7 @@
                                                                 <label class="col-sm-5 col-form-label">Number of Positions </label>
                                                                 <div class="col-sm-7">
                                                                     <div class="form-group bmd-form-group textarea">
-                                                                        <input name="" id="" class="form-control" type="text" value="">
+                                                                        <input name="number_of_positions" id="" class="form-control" type="text" value="">
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -368,7 +368,7 @@
                                                                 <label class="col-sm-4 col-form-label">Country of Origin </label>
                                                                 <div class="col-sm-7">
                                                                     <div class="form-group bmd-form-group textarea">
-                                                                        <input name="" id="" class="form-control" type="text" value="">
+                                                                        <input name="country_of_origin" id="" class="form-control" type="text" value="">
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -378,7 +378,7 @@
                                                                 <label class="col-sm-5 col-form-label">Product Dimensions </label>
                                                                 <div class="col-sm-7">
                                                                     <div class="form-group bmd-form-group textarea">
-                                                                        <input name="" id="" class="form-control" type="text" value="">
+                                                                        <input name="product_dimensions" id="" class="form-control" type="text" value="">
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -391,7 +391,7 @@
                                                                 <label class="col-sm-4 col-form-label">Specification Title </label>
                                                                 <div class="col-sm-7">
                                                                     <div class="form-group bmd-form-group textarea">
-                                                                        <input name="" id="" class="form-control" type="text" value="">
+                                                                        <input name="specification_title" id="" class="form-control" type="text" value="">
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -401,7 +401,7 @@
                                                                 <label class="col-sm-5 col-form-label">Specification Value </label>
                                                                 <div class="col-sm-7">
                                                                     <div class="form-group bmd-form-group textarea">
-                                                                        <input name="" id="" class="form-control" type="text" value="">
+                                                                        <input name="specification_value" id="" class="form-control" type="text" value="">
 
                                                                     </div>
                                                                 </div>
@@ -421,7 +421,7 @@
                                                         <label class="col-sm-2 col-form-label">Additional Information</label>
                                                         <div class="col-sm-10">
                                                             <div class="form-group bmd-form-group textarea">
-                                                                <textarea name="" id="" class="form-control" type="text" rows="3"></textarea>
+                                                                <textarea name="additional_information" id="" class="form-control" type="text" rows="3"></textarea>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -514,7 +514,7 @@
     $(function() {
         $("#sub_images").change(function() {
             if (this.files && this.files[0]) {
-                alert(this.files.length);
+                // alert(this.files.length);
                 for (var i = 0; i < this.files.length; i++) {
                     var reader = new FileReader();
                     reader.onload = function (event) {

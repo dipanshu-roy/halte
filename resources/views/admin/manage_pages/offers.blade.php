@@ -27,12 +27,12 @@
                                     <label class="col-sm-2 col-form-label">Image</label>
                                     <div class="col-sm-10">
                                         <div class="form-group bmd-form-group textarea">
-                                            <input name="image" id="" class="form-control" type="file" value="">
-                                            @if(isset($updateOffer->image))
-                                            <img src="{{asset($updateOffer->image)}}" height="100" width="100"></img>
-                                            @else
-                                            <img src="{{ asset('admin/img/vue.png') }}" height="100" width="100"></img>
-                                            @endif
+                                            <input name="image" id="image" class="form-control" type="file" value="">
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <a href="#" class="img-remove-thumb"> @if(!empty($updateOffer->image))<i class="fa fa-times" onclick="romeve_image()"></i><img id="blah" src="{{asset($updateOffer->image)}}" alt="" width="100" class="img-thumbnail"> @endif</a>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -40,7 +40,7 @@
                                     <label class="col-sm-2 col-form-label">Link</label>
                                     <div class="col-sm-10">
                                         <div class="form-group bmd-form-group textarea">
-                                            <input name="link" class="form-control" type="text" value="@if(!empty($updateOffer->link)){{$updateOffer->link}}@endif">
+                                            <input name="link" class="form-control" type="text" maxlength="255" value="@if(!empty($updateOffer->link)){{$updateOffer->link}}@endif">
                                         </div>
                                     </div>
                                 </div>
@@ -48,7 +48,7 @@
                                     <label class="col-sm-2 col-form-label">Page Title</label>
                                     <div class="col-sm-10">
                                         <div class="form-group bmd-form-group textarea">
-                                            <input name="page_title" class="form-control" type="text" value="@if(!empty($updateOffer->page_title)){{$updateOffer->page_title}}@endif">
+                                            <input name="page_title" class="form-control" maxlength="50" type="text" value="@if(!empty($updateOffer->page_title)){{$updateOffer->page_title}}@endif">
                                             <p class="small">For SEO</p>
                                         </div>
                                     </div>
@@ -66,7 +66,7 @@
                                     <label class="col-sm-2 col-form-label">Keywords</label>
                                     <div class="col-sm-10">
                                         <div class="form-group bmd-form-group textarea">
-                                            <input name="keyword" class="form-control" type="text" value="@if(!empty($updateOffer->keyword)){{$updateOffer->keyword}}@endif">
+                                            <input name="keyword" class="form-control" maxlength="100" type="text" value="@if(!empty($updateOffer->keyword)){{$updateOffer->keyword}}@endif">
                                             <p class="small">For SEO</p>
                                         </div>
                                     </div>
@@ -113,7 +113,7 @@
                                                 <td>{{$row->text}}</td>
                                                 <td>@if(!empty($row->image))<img src="{{asset($row->image)}}" style="width:50px;height:30px;object-fit:cover">@endif</td>
                                                 <td><a href="{{$row->link}}">View</a></td>
-                                                <td><a href="{{url('update-offer',$row->id)}}">Edit</a> / <a onclick="return confirm('Are you sure you want to delete this ?');" href="{{url('delete-offer',$row->id)}}">Delete</a></td>
+                                                <td><a href="{{url('admin/update-offer',$row->id)}}">Edit</a> / <a onclick="return confirm('Are you sure you want to delete this ?');" href="{{url('admin/delete-offer',$row->id)}}">Delete</a></td>
                                             </tr>
                                             @endforeach
                                             @endif
@@ -132,5 +132,26 @@
             </div>
         </div>
     </div>
-
+    @push('script')
+    <script>
+        function romeve_image(){
+            $(".img-remove-thumb").empty();
+            $("#image").val('');
+        }
+    </script>
+    <script>
+        $(document).ready(() => {
+            $("#image").change(function () {
+                const file = this.files[0];
+                if (file) {
+                    let reader = new FileReader();
+                    reader.onload = function (event) {
+                        $(".img-remove-thumb").html('<i class="fa fa-times" onclick="romeve_image()"></i><img src="'+event.target.result+'" width="100" class="img-thumbnail">');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
+    </script>
+    @endpush
 @endsection('content')

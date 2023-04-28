@@ -13,6 +13,11 @@ use App\Models\User;
 use App\Models\State;
 use App\Models\City;
 use App\Models\PageContent;
+use App\Models\ContactQuery;
+use App\Models\DealerQuery;
+use App\Models\Faq;
+use App\Models\FaqCategory;
+use App\Models\NewsMedia;
 use App\Models\Blog;
 use Auth;
 use DB;
@@ -373,5 +378,101 @@ class AdminController extends Controller
     public function DeleteBlog(Request $request,$id){
         Blog::where('id',$id)->delete();
         return redirect('blog')->with('success','Deleted successfully');
+    }
+    public function ContactQuery(Request $request){
+        if(!empty($request->start_date) && !empty($request->end_date)){
+            $startDate = date_format(date_create($request->start_date),'Y-m-d');
+            $endDate = date_format(date_create($request->end_date),'Y-m-d');
+            $contactQuery = ContactQuery::whereBetween('created_at', [$startDate, $endDate])->orderBy('id','DESC')->get();
+        }else{
+            $contactQuery = ContactQuery::skip(0)->take(10)->orderBy('id','DESC')->get();
+        }
+        return view('admin/manage_pages/contact_query',compact('contactQuery'));
+    }
+    public function DealerQuery(Request $request){
+        if(!empty($request->start_date) && !empty($request->end_date)){
+            $startDate = date_format(date_create($request->start_date),'Y-m-d');
+            $endDate = date_format(date_create($request->end_date),'Y-m-d');
+            $dealerQuery = DealerQuery::whereBetween('created_at', [$startDate, $endDate])->orderBy('id','DESC')->get();
+        }else{
+            $dealerQuery = DealerQuery::skip(0)->take(10)->orderBy('id','DESC')->get();
+        }
+        return view('admin/manage_pages/dealer_query',compact('dealerQuery'));
+    }
+    public function FAQ(Request $request){
+        $faqcategory = FaqCategory::select('id','category_name')->orderBy('id','DESC')->get();
+        $resultFaq = DB::select("SELECT b.category_name,a.id,a.title,a.text,a.category_id FROM `faqs` AS a INNER JOIN faq_categories AS b ON a.category_id=b.id ORDER BY a.id DESC");
+        if(!empty($request->id)){
+            $faq = Faq::where('id',$request->id)->first();
+            $faq->category_id = $request->category_id;
+            $faq->title = $request->title;
+            $faq->text = $request->text;
+            $faq->save();
+            return redirect('faq')->with('success','Update successfuly');
+        }
+        if(!empty($request->text)){
+            $faq = new Faq();
+            $faq->category_id = $request->category_id;
+            $faq->title = $request->title;
+            $faq->text = $request->text;
+            $faq->save();
+            return redirect('faq')->with('success','Saved successfuly');
+        }
+        return view('admin/manage_pages/faq',compact('resultFaq','faqcategory'));
+    }
+    public function UpdateFaq(Request $request,$id){
+        $updateFaq = Faq::where('id',$id)->orderBy('id','DESC')->first();
+        $faqcategory = FaqCategory::select('id','category_name')->orderBy('id','DESC')->get();
+        return view('admin/manage_pages/faq',compact('updateFaq','faqcategory'));
+    }
+    public function DeleteFaq(Request $request,$id){
+        Faq::where('id',$id)->delete();
+        return redirect('faq')->with('success','Deleted successfully');
+    }
+    public function NewsMedia(Request $request){
+        $resultNewsMe = NewsMedia::orderBy('id','DESC')->get();
+        if(!empty($request->text)){
+            $newsMedia = new NewsMedia();
+            $newsMedia->text = $request->text;
+            if(!empty($request->image_certificate)){
+                $extension = $request->image_certificate->getClientOriginalExtension();
+                $fileNameToStore = $request->image_certificate.'.'.$extension;
+                $imageName = $request->image_certificate->move('public/pages/',$fileNameToStore);
+                $newsMedia->image_certificate = $imageName;
+            }
+            if(!empty($request->market_place_logos)){
+                $extension = $request->market_place_logos->getClientOriginalExtension();
+                $fileNameToStore = $request->market_place_logos.'.'.$extension;
+                $imageName = $request->market_place_logos->move('public/pages/',$fileNameToStore);
+                $newsMedia->market_place_logos = $imageName;
+            }
+            if(!empty($request->vendor_logos)){
+                $extension = $request->vendor_logos->getClientOriginalExtension();
+                $fileNameToStore = $request->vendor_logos.'.'.$extension;
+                $imageName = $request->vendor_logos->move('public/pages/',$fileNameToStore);
+                $newsMedia->vendor_logos = $imageName;
+            }
+            if(!empty($request->media_image_normal)){
+                $extension = $request->media_image_normal->getClientOriginalExtension();
+                $fileNameToStore = $request->media_image_normal.'.'.$extension;
+                $imageName = $request->media_image_normal->move('public/pages/',$fileNameToStore);
+                $newsMedia->media_image_normal = $imageName;
+            }
+            if(!empty($request->media_image_enlarge)){
+                $extension = $request->media_image_enlarge->getClientOriginalExtension();
+                $fileNameToStore = $request->media_image_enlarge.'.'.$extension;
+                $imageName = $request->media_image_enlarge->move('public/pages/',$fileNameToStore);
+                $newsMedia->media_image_enlarge = $imageName;
+            }
+            $newsMedia->page_title = $request->page_title;
+            $newsMedia->description = $request->description;
+            $newsMedia->keywords = $request->keywords;
+            $newsMedia->save();
+            return redirect('news-media')->with('success','Saved successfuly');
+        }
+        return view('admin/manage_pages/news_media',compact('resultNewsMe'));
+    }
+    public function HomePage(Request $request){
+        return view('admin/manage_pages/home_page');
     }
 }

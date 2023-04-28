@@ -72,7 +72,7 @@
         <div class="col-md-12">
 
         <div class="table-responsive">
-        <table class="table">
+        <table id="example" class="display" style="width:100%">
         <thead class="text-primary">
         <tr> 
         <th>S. No.</th>

@@ -184,7 +184,7 @@
                         <div class="collapse" id="pages">
                             <ul class="nav">
                                 <li class="nav-item ">
-                                    <a class="nav-link" href="home-page.html">
+                                    <a class="nav-link" href="{{ url('home-page') }}">
                                         <span class="sidebar-mini"> </span>
                                         <span class="sidebar-normal">Home Page</span>
                                     </a>
@@ -208,7 +208,7 @@
                                     </a>
                                 </li>
                                 <li class="nav-item ">
-                                    <a class="nav-link" href="news-media.html">
+                                    <a class="nav-link" href="{{ url('news-media') }}">
                                         <span class="sidebar-mini"> </span>
                                         <span class="sidebar-normal">News &amp; Media</span>
                                     </a>
@@ -244,7 +244,7 @@
                                     </a>
                                 </li>
                                 <li class="nav-item ">
-                                    <a class="nav-link" href="faqs.html">
+                                    <a class="nav-link" href="{{ url('faq') }}">
                                         <span class="sidebar-mini"> </span>
                                         <span class="sidebar-normal">FAQs</span>
                                     </a>
@@ -261,14 +261,14 @@
 
 
                     <li class="nav-item">
-                        <a class="nav-link" href="contact-query.html">
+                        <a class="nav-link" href="{{ url('contact-query') }}">
                             <i class="material-icons"></i>
                             <p>Contact Form Queries</p>
                         </a>
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" href="dealer-query.html">
+                        <a class="nav-link" href="{{ url('dealer-query') }}">
                             <i class="material-icons"></i>
                             <p>Dealer Form Queries</p>
                         </a>
@@ -378,7 +378,7 @@
        Swal.fire('Failed','{{session('error')}}','error');
     </script>
     @endif
-    <script>
+    @stack('script')
     
     <script>
     $(document).ready(function() {

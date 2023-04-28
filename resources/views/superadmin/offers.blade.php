@@ -27,12 +27,12 @@
                                     <label class="col-sm-2 col-form-label">Image</label>
                                     <div class="col-sm-10">
                                         <div class="form-group bmd-form-group textarea">
-                                            <input name="image" id="" class="form-control" type="file" value="">
-                                            @if(isset($updateOffer->image))
-                                            <img src="{{asset($updateOffer->image)}}" height="100" width="100"></img>
-                                            @else
-                                            <img src="{{ asset('admin/img/vue.png') }}" height="100" width="100"></img>
-                                            @endif
+                                            <input name="image" id="image" class="form-control" type="file" value="">
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <a href="#" class="img-remove-thumb"> @if(!empty($updateOffer->image))<i class="fa fa-times" onclick="romeve_image()"></i><img id="blah" src="{{asset($updateOffer->image)}}" alt="" width="100" class="img-thumbnail"> @endif</a>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -40,7 +40,7 @@
                                     <label class="col-sm-2 col-form-label">Link</label>
                                     <div class="col-sm-10">
                                         <div class="form-group bmd-form-group textarea">
-                                            <input name="link" class="form-control" type="text" value="@if(!empty($updateOffer->link)){{$updateOffer->link}}@endif">
+                                            <input name="link" class="form-control" type="text" maxlength="255" value="@if(!empty($updateOffer->link)){{$updateOffer->link}}@endif">
                                         </div>
                                     </div>
                                 </div>
@@ -48,7 +48,7 @@
                                     <label class="col-sm-2 col-form-label">Page Title</label>
                                     <div class="col-sm-10">
                                         <div class="form-group bmd-form-group textarea">
-                                            <input name="page_title" class="form-control" type="text" value="@if(!empty($updateOffer->page_title)){{$updateOffer->page_title}}@endif">
+                                            <input name="page_title" class="form-control" maxlength="50" type="text" value="@if(!empty($updateOffer->page_title)){{$updateOffer->page_title}}@endif">
                                             <p class="small">For SEO</p>
                                         </div>
                                     </div>
@@ -66,7 +66,7 @@
                                     <label class="col-sm-2 col-form-label">Keywords</label>
                                     <div class="col-sm-10">
                                         <div class="form-group bmd-form-group textarea">
-                                            <input name="keyword" class="form-control" type="text" value="@if(!empty($updateOffer->keyword)){{$updateOffer->keyword}}@endif">
+                                            <input name="keyword" class="form-control" maxlength="100" type="text" value="@if(!empty($updateOffer->keyword)){{$updateOffer->keyword}}@endif">
                                             <p class="small">For SEO</p>
                                         </div>
                                     </div>
@@ -94,7 +94,7 @@
                             <div class="col-md-12">
 
                                 <div class="table-responsive">
-                                    <table class="table">
+                                    <table id="example" class="display" style="width:100%">
                                         <thead class="text-primary">
                                         <tr> 
                                         <th>S. No.</th>
@@ -132,5 +132,26 @@
             </div>
         </div>
     </div>
-
+    @push('script')
+    <script>
+        function romeve_image(){
+            $(".img-remove-thumb").empty();
+            $("#image").val('');
+        }
+    </script>
+    <script>
+        $(document).ready(() => {
+            $("#image").change(function () {
+                const file = this.files[0];
+                if (file) {
+                    let reader = new FileReader();
+                    reader.onload = function (event) {
+                        $(".img-remove-thumb").html('<i class="fa fa-times" onclick="romeve_image()"></i><img src="'+event.target.result+'" width="100" class="img-thumbnail">');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
+    </script>
+    @endpush
 @endsection('content')

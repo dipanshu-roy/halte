@@ -42,7 +42,7 @@
                                 <div class="col-sm-10">
                                     <div class="form-group bmd-form-group textarea">
                                         <input name="banner_image" class="form-control" type="file">
-                                        <p class="small">Size (w x h) 1600px x 450px</p>
+                                        <p class="small">Size (w x h) 350px x 350px</p>
                                         @if(!empty($update->banner_image))
                                             <img src="{{asset($update->banner_image)}}" style="width:80px;height:30px;object-fit:cover">
                                         @endif

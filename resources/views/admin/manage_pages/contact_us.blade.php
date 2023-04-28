@@ -18,7 +18,7 @@
                                     <label class="col-sm-2 col-form-label">Map Link</label>
                                     <div class="col-sm-10">
                                         <div class="form-group bmd-form-group textarea">
-                                            <input name="map_link" class="form-control" type="text" value="@if(!empty($ContactPageContent->map_link)){{$ContactPageContent->map_link}}@endif">
+                                            <input name="map_link" maxlength="100" class="form-control" type="text" value="@if(!empty($ContactPageContent->map_link)){{$ContactPageContent->map_link}}@endif">
                                             <input name="id" type="hidden" value="@if(!empty($ContactPageContent->id)){{$ContactPageContent->id}}@endif">
                                             <p class="small">For SEO</p>
                                         </div>
@@ -28,7 +28,7 @@
                                     <label class="col-sm-2 col-form-label">Page Title</label>
                                     <div class="col-sm-10">
                                         <div class="form-group bmd-form-group textarea">
-                                            <input name="page_title" class="form-control" type="text" value="@if(!empty($ContactPageContent->page_title)){{$ContactPageContent->page_title}}@endif">
+                                            <input name="page_title" maxlength="50" class="form-control" type="text" value="@if(!empty($ContactPageContent->page_title)){{$ContactPageContent->page_title}}@endif">
                                             <p class="small">For SEO</p>
                                         </div>
                                     </div>
@@ -46,7 +46,7 @@
                                     <label class="col-sm-2 col-form-label">Keywords</label>
                                     <div class="col-sm-10">
                                         <div class="form-group bmd-form-group textarea">
-                                            <input name="keyword" class="form-control" type="text" value="@if(!empty($ContactPageContent->keyword)){{$ContactPageContent->keyword}}@endif">
+                                            <input name="keyword" maxlength="100" class="form-control" type="text" value="@if(!empty($ContactPageContent->keyword)){{$ContactPageContent->keyword}}@endif">
                                             <p class="small">For SEO</p>
                                         </div>
                                     </div>

@@ -4,9 +4,19 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>{{config('app.name')}}</title>
-    <meta name="description" content="">
-	<meta name="keywords" content="">
+	@if(!empty($selected_subcategories))
+		<title>{{$selected_subcategories->page_title}}</title>
+		<meta name="description" content="{{$selected_subcategories->page_description}}">
+		<meta name="keywords" content="{{$selected_subcategories->page_keywords}}">
+	@elseif(!empty($get_selected_brand))
+		<title>{{$get_selected_brand->barnd_name}}</title>
+		<meta name="description" content="{{$get_selected_brand->barnd_name}}">
+		<meta name="keywords" content="{{$get_selected_brand->barnd_name}}">
+	@else
+		<title>{{config('app.name')}}</title>
+		<meta name="description" content="{{config('app.name')}}">
+		<meta name="keywords" content="{{config('app.name')}}">
+	@endif
     <link rel="apple-touch-icon" sizes="76x76" href="{{asset('admin/img/apple-icon.png')}}">
     <link rel="icon" type="image/png" href="{{asset('admin/img/favicon.png')}}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -18,12 +28,12 @@
 	<link href="{{asset('web/addons/bootstrap/jquery.smartmenus.bootstrap.css')}}" rel="stylesheet">
 	<link href="{{asset('web/css/sm-blue.css')}}" rel="stylesheet">
 	<link href="{{asset('web/css/jquery.bslt.css')}}" rel="stylesheet">
-
 	<link href="{{asset('web/slick/slick.css')}}" rel="stylesheet">
 	<link href="{{asset('web/slick/slick-theme.css')}}" rel="stylesheet">
-
-	<link href="{{asset('web/css/main-styles.css')}}" rel="stylesheet">
+	<link href="{{asset('web/css/jquery.fancybox.min.css')}}" rel="stylesheet" type="text/css">
+	<link href="{{asset('web/css/main-styles.css?x')}}" rel="stylesheet">
 	<link href="{{asset('web/css/responsive.css')}}" rel="stylesheet">
+	
 </head>
 
 <body class="homepage">
@@ -79,7 +89,7 @@
 											<li><a href="service-spares.html">Service &amp; Spares</a></li>
 											<li><a href="demo-installation.html">Demo</a></li>
 											<li><a href="demo-installation.html">Installation </a></li>
-											<li><a href="contact-us.html">Contact Us</a></li>
+											<li><a href="{{url('contact-us')}}">Contact Us</a></li>
 											<li><a href="offers.html">View All Offers</a></li>
 										</ul>
 									</li>
@@ -87,25 +97,12 @@
 										<a href="#" class="dropdown-toggle" data-toggle="dropdown">PRODUCTS <span class="caret"></span></a>
 										<ul class="dropdown-menu">
 											<li>
-												<a href="#" class="dropdown-toggle" data-toggle="dropdown">EXPLORE OUR
-													RANGE <span class="caret"></span></a>
+												<a href="#" class="dropdown-toggle" data-toggle="dropdown">EXPLORE OUR RANGE <span class="caret"></span></a>
 												<ul class="dropdown-menu">
-													<li><a href="product-list.html">Brush Cutter</a></li>
-													<li><a href="product-list.html">Chainsaw</a></li>
-													<li><a href="product-list.html">Hedge Trimmer</a></li>
-													<li><a href="product-list.html">Leaf Blower</a></li>
-													<li><a href="product-list.html">Lawn &amp; Garden</a></li>
-													<li><a href="product-list.html">Lawn Mowers</a></li>
-													<li><a href="product-list.html">Barbecue</a></li>
-													<li><a href="product-list.html">Firepits</a></li>
-													<li><a href="product-list.html">Gensets</a></li>
-													<li><a href="product-list.html">Snowchains</a></li>
-													<li><a href="product-list.html">Tillers</a></li>
-													<li><a href="product-list.html">Glues</a></li>
-													<li><a href="product-list.html">Tapes</a></li>
-													<li><a href="product-list.html">Adhesives</a></li>
-													<li><a href="product-list.html">DIY</a></li>
-													<li><a href="product-list.html">Fogging Machine</a></li>
+													@php $sub_categories = DB::select("SELECT a.category_slug,b.subcategory_name,b.subcategory_slug FROM `product_categories` as a INNER JOIN product_sub_categories as b on a.id=b.category_id");@endphp
+													@if(!empty($sub_categories)) @foreach($sub_categories as $subcat)
+														<li><a href="{{url('ct/'.$subcat->category_slug.'/'.$subcat->subcategory_slug)}}">{{$subcat->subcategory_name}}</a></li>
+													@endforeach @endif
 												</ul>
 											</li>
 											<li>
@@ -202,14 +199,9 @@
 			<div class="clm3">
 				<h3 class="h3ftr">EXPLORE OUR RANGE <span class="hr"></span></h3>
 				<ul class="lsftrln mrb0-sm">
-					<li><a href="product-list.html">Brush Cutter</a></li>
-					<li><a href="product-list.html">Chainsaw</a></li>
-					<li><a href="product-list.html">Hedge Trimmer</a></li>
-					<li><a href="product-list.html">Leaf Blower</a></li>
-					<li><a href="product-list.html">Lawn &amp; Garden</a></li>
-					<li><a href="product-list.html">Lawn Mowers</a></li>
-					<li><a href="product-list.html">Barbecue</a></li>
-					<li><a href="product-list.html">Firepits</a></li>
+					@if(!empty($sub_categories)) @foreach($sub_categories as $subcat)
+						<li><a href="{{url('ct/'.$subcat->category_slug.'/'.$subcat->subcategory_slug)}}">{{$subcat->subcategory_name}}</a></li>
+					@endforeach @endif
 				</ul>
 			</div>
 			<div class="clm3">
@@ -295,24 +287,43 @@
 	<a href="#0" class="cd-top">Back To Top</a>
 	<a href="https://api.whatsapp.com/send?phone=919914130130&text=I%20am%20interested" class="wa"></a>
 	<script src="{{asset('web/js/jquery.js')}}"></script>
-	<script type="text/javascript" src="{{asset('web/js/jquery-1.11.0.min.js')}}"></script>
-	<script type="text/javascript" src="{{asset('web/js/jquery-migrate-1.2.1.min.js')}}"></script>
-	<script type="text/javascript" src="{{asset('web/slick/slick.min.js')}}"></script>
-	<link href="{{asset('web/css/jquery.fancybox.min.css')}}" rel="stylesheet" type="text/css">
+	<script src="{{asset('web/js/jquery-1.11.0.min.js')}}" type="text/javascript"></script>
+	<script src="{{asset('web/js/jquery-migrate-1.2.1.min.js')}}" type="text/javascript"></script>
+	<script src="{{asset('web/slick/slick.min.js')}}" type="text/javascript"></script>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
 	<script src="{{asset('web/js/jquery.fancybox.min.js')}}"></script>
 
+	<script src="{{asset('web/js/bootstrap.min.js')}}"></script>
+	<script src="{{asset('web/js/jquery.prettyPhoto.js')}}"></script>
+	<script src="{{asset('web/js/jquery.smartmenus.js')}}"></script>
+	<script src="{{asset('web/addons/bootstrap/jquery.smartmenus.bootstrap.min.js')}}"></script>
+	<script src="{{asset('web/js/wow.min.js')}}"></script>
+	<script src="{{asset('web/js/jquery.bslt.min.js')}}"></script>
+	<script src="{{asset('web/js/main.js')}}"></script>
+	<script src="{{asset('admin/js/plugins/sweetalert2.js')}}"></script>
+	@if(!empty(session('success')))
+    <script type="text/javascript">
+        Swal.fire('Success','{{session('success')}}','success');
+    </script>
+    @endif
+    @if(!empty(session('error')))
+    <script type="text/javascript">
+       Swal.fire('Failed','{{session('error')}}','error');
+    </script>
+    @endif
 	<script>
-		$(window).on('load', function () {
-			$('#offers-pp').fancybox({
-				width: '40%',
-				height: '40%',
-				autoScale: true,
-				autoScale: true,
-				transitionIn: 'fade',
-				transitionOut: 'fade',
-				smallBtn: true,
-			}).delay(5000).queue(function () { $(this).trigger('click'); })
-		});
+		// $(window).on('load', function () {
+		// 	$('#offers-pp').fancybox({
+		// 		width: '40%',
+		// 		height: '40%',
+		// 		autoScale: true,
+		// 		autoScale: true,
+		// 		transitionIn: 'fade',
+		// 		transitionOut: 'fade',
+		// 		smallBtn: true,
+		// 	}).delay(5000).queue(function () { $(this).trigger('click'); })
+		// });
 		$(document).ready(function () {
 			$('.list-sldr').slick({
 				slidesToScroll: 1,
@@ -397,6 +408,39 @@
 					}
 				]
 			});
+			$('.prod-subcat-sldr').slick({
+				slidesToScroll: 1,
+				variableWidth: true,
+				infinite: false,
+				variableHeight: true,
+				arrows: true,
+				dots: false,
+				fade: false,
+				centerPadding: '0px',
+				swipeToSlide: true,
+				outerEdgeLimit: true,
+				responsive: [
+					{
+						breakpoint: 1024,
+						settings: {
+
+						}
+					},
+					{
+						breakpoint: 600,
+						settings: {
+							slidesToShow: 5,
+							slidesToScroll: 1,
+						}
+					},
+					{
+						breakpoint: 480,
+						settings: {
+
+						}
+					}
+				]
+			});
 			$('.ofr-sldr').slick({
 				slidesToShow: 1,
 				slidesToScroll: 1,
@@ -430,13 +474,22 @@
 				]
 			});
 		});
+		$(".checkbox-menu").on("change", "input[type='checkbox']", function () {
+			$(this).closest("li").toggleClass("active", this.checked);
+		});
+
+		$(document).on('click', '.allow-focus', function (e) {
+			e.stopPropagation();
+		});
 	</script>
-	<script src="{{asset('web/js/bootstrap.min.js')}}"></script>
-	<script src="{{asset('web/js/jquery.prettyPhoto.js')}}"></script>
-	<script src="{{asset('web/js/jquery.smartmenus.js')}}"></script>
-	<script src="{{asset('web/addons/bootstrap/jquery.smartmenus.bootstrap.min.js')}}"></script>
-	<script src="{{asset('web/js/wow.min.js')}}"></script>
-	<script src="{{asset('web/js/jquery.bslt.min.js')}}"></script>
-	<script src="{{asset('web/js/main.js')}}"></script>
+	<script>
+		$(".dropdown-toggle").click(function() {
+			if($(this).hasClass('collapsed')){
+				$(this).find(".fa").removeClass('fa-caret-right').addClass('fa-caret-down');
+			}else{
+				$(this).find(".fa").removeClass('fa-caret-down').addClass('fa-caret-right');
+			}
+		});
+	</script>
 </body>
 </html>

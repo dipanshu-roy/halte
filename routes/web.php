@@ -51,6 +51,8 @@ Route::middleware(['auth','user-access:admin'])->group(function () {
     Route::post('admin/product/save-product', [App\Http\Controllers\Superadmin\ProductController::class, 'SaveProduct']);
     Route::get('admin/product/update-product/{id}', [App\Http\Controllers\Superadmin\ProductController::class, 'UpdateProduct']);
     Route::get('admin/product/delete-product/{id}', [App\Http\Controllers\Superadmin\ProductController::class, 'DeleteProduct']);
+    /* Product View */
+    Route::get('admin/product/view-product', [App\Http\Controllers\Superadmin\ProductController::class, 'ViewProduct']);
     /*  Manage Pages */                                
     Route::any('admin/about-us', [SuperadminController::class, 'AboutUs']);
     Route::any('admin/support', [SuperadminController::class, 'Support']);
@@ -108,6 +110,11 @@ Route::middleware(['auth', 'user-access:staff'])->group(function () {
     Route::any('blog', [App\Http\Controllers\Admin\AdminController::class, 'Blogs']);
     Route::any('update-blog/{id}', [App\Http\Controllers\Admin\AdminController::class, 'UpdateBlog']);
     Route::any('delete-blog/{id}', [App\Http\Controllers\Admin\AdminController::class, 'DeleteBlog']);
+    Route::any('news-media', [App\Http\Controllers\Admin\AdminController::class, 'NewsMedia']);
+    Route::any('home-page', [App\Http\Controllers\Admin\AdminController::class, 'HomePage']);
+    Route::any('contact-query', [App\Http\Controllers\Admin\AdminController::class, 'ContactQuery']);
+    Route::any('dealer-query', [App\Http\Controllers\Admin\AdminController::class, 'DealerQuery']);
+    Route::any('faq', [App\Http\Controllers\Admin\AdminController::class, 'FAQ']);
 });
 
 
@@ -117,4 +124,7 @@ Route::middleware(['auth', 'user-access:user'])->group(function () {
 });
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::get('/', [App\Http\Controllers\WebController::class, 'index']);
-Route::get('/brand/{slug}', [App\Http\Controllers\WebController::class, 'Brand']);
+Route::get('/brand/{slug}', [App\Http\Controllers\WebController::class, 'Product']);
+Route::get('/ct/{cat}/{subcat}', [App\Http\Controllers\WebController::class, 'SubProduct']);
+Route::get('/contact-us', [App\Http\Controllers\WebController::class, 'ContactUs']);
+Route::post('/send-enquiry', [App\Http\Controllers\WebController::class, 'SendEnquiry']);

@@ -372,10 +372,6 @@
 								<div class="pro-im">
 									<img src="{{asset('web/images/product-hm4.jpg')}}" class="">
 								</div>
-								<!-- <div class="prc">
-<span class="slps"><i class="fa fa-inr"></i> 11,679</span>
-<span class="mrps"><i class="fa fa-inr"></i> 15,679</span> <span class="save-pr">SAVE 28%</span>
-</div> -->
 								<div class="prod-card-price">
 									<div class="bndl-prod-price-sale"><i class="fa fa-inr"></i> 3,349</div>
 									<div class="bndl-prod-price-mrps"><i class="fa fa-inr"></i> <span>3,800</span> Save

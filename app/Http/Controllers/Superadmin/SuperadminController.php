@@ -8,6 +8,7 @@ use App\Models\PageContent;
 use App\Models\ContactQuery;
 use App\Models\DealerQuery;
 use App\Models\Faq;
+use App\Models\FaqCategory;
 use App\Models\NewsMedia;
 use App\Models\Blog;
 use Auth;
@@ -354,7 +355,6 @@ class SuperadminController extends Controller
         Blog::where('id',$id)->delete();
         return redirect('admin/blog')->with('success','Deleted successfully');
     }
-
     public function ContactQuery(Request $request){
         if(!empty($request->start_date) && !empty($request->end_date)){
             $startDate = date_format(date_create($request->start_date),'Y-m-d');
@@ -376,17 +376,37 @@ class SuperadminController extends Controller
         return view('superadmin/dealer_query',compact('dealerQuery'));
     }
     public function FAQ(Request $request){
+        $faqcategory = FaqCategory::select('id','category_name')->orderBy('id','DESC')->get();
+        $resultFaq = DB::select("SELECT b.category_name,a.id,a.title,a.text,a.category_id FROM `faqs` AS a INNER JOIN faq_categories AS b ON a.category_id=b.id ORDER BY a.id DESC");
+        if(!empty($request->id)){
+            $faq = Faq::where('id',$request->id)->first();
+            $faq->category_id = $request->category_id;
+            $faq->title = $request->title;
+            $faq->text = $request->text;
+            $faq->save();
+            return redirect('admin/faq')->with('success','Update successfuly');
+        }
         if(!empty($request->text)){
             $faq = new Faq();
-            $faq->category = $request->category;
+            $faq->category_id = $request->category_id;
             $faq->title = $request->title;
             $faq->text = $request->text;
             $faq->save();
             return redirect('admin/faq')->with('success','Saved successfuly');
         }
-        return view('superadmin/faq');
+        return view('superadmin/faq',compact('resultFaq','faqcategory'));
+    }
+    public function UpdateFaq(Request $request,$id){
+        $updateFaq = Faq::where('id',$id)->orderBy('id','DESC')->first();
+        $faqcategory = FaqCategory::select('id','category_name')->orderBy('id','DESC')->get();
+        return view('superadmin/faq',compact('updateFaq','faqcategory'));
+    }
+    public function DeleteFaq(Request $request,$id){
+        Faq::where('id',$id)->delete();
+        return redirect('admin/faq')->with('success','Deleted successfully');
     }
     public function NewsMedia(Request $request){
+        $resultNewsMe = NewsMedia::orderBy('id','DESC')->get();
         if(!empty($request->text)){
             $newsMedia = new NewsMedia();
             $newsMedia->text = $request->text;
@@ -426,7 +446,7 @@ class SuperadminController extends Controller
             $newsMedia->save();
             return redirect('admin/news-media')->with('success','Saved successfuly');
         }
-        return view('superadmin/news_media');
+        return view('superadmin/news_media',compact('resultNewsMe'));
     }
     public function HomePage(Request $request){
         return view('superadmin/home_page');
