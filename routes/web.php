@@ -126,5 +126,29 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 Route::get('/', [App\Http\Controllers\WebController::class, 'index']);
 Route::get('/brand/{slug}', [App\Http\Controllers\WebController::class, 'Product']);
 Route::get('/ct/{cat}/{subcat}', [App\Http\Controllers\WebController::class, 'SubProduct']);
+
+
 Route::get('/contact-us', [App\Http\Controllers\WebController::class, 'ContactUs']);
+Route::get('/about-us', [App\Http\Controllers\WebController::class, 'WebPages']);
+Route::get('/become-dealer', [App\Http\Controllers\WebController::class, 'WebPages']);
+Route::get('/terms-and-condition', [App\Http\Controllers\WebController::class, 'WebPages']);
+Route::get('/spares-and-services', [App\Http\Controllers\WebController::class, 'WebPages']);
+Route::get('/demo-and-installation', [App\Http\Controllers\WebController::class, 'WebPages']);
+Route::get('/offers', [App\Http\Controllers\WebController::class, 'WebPages']);
+Route::get('/news-and-media', [App\Http\Controllers\WebController::class, 'NewsAndMedia']);
+Route::get('/blogs', [App\Http\Controllers\WebController::class, 'Blogs']);
+Route::get('/blogs/{id}', [App\Http\Controllers\WebController::class, 'BlogsRead']);
+Route::get('/support', [App\Http\Controllers\WebController::class, 'Support']);
+
+
+Route::get('cart', [App\Http\Controllers\WebController::class, 'cart'])->name('cart');
+Route::get('add-to-cart/{id}', [App\Http\Controllers\WebController::class, 'addToCart']);
+Route::patch('update-cart', [App\Http\Controllers\WebController::class, 'update'])->name('update.cart');
+Route::delete('remove-from-cart', [App\Http\Controllers\WebController::class, 'remove'])->name('remove.from.cart');
+
+
+Route::get('/account/login', [App\Http\Controllers\WebController::class, 'AccountLogin']);
 Route::post('/send-enquiry', [App\Http\Controllers\WebController::class, 'SendEnquiry']);
+
+
+// SELECT a.id,a.product_name,b.category_name,c.subcategory_name,d.barnd_name,a.product_slug,a.main_image,a.sub_images,a.video,a.mrps,a.sale_price,a.amazon_link,a.about_this_item,a.rating,a.synonyms_other_name,a.page_title,a.page_description,a.page_keywords FROM `products` as a INNER JOIN product_categories as b on a.category_id=b.id INNER JOIN product_sub_categories as c on a.subcategory_id=c.id INNER JOIN brands as d on a.brand_id=d.id;

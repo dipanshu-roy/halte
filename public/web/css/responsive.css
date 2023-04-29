@@ -962,3 +962,14 @@ body {
 overflow-x: hidden;
 }
 }
+#loader {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    background: rgb(0 0 0 / 55%) url(../images/prettyPhoto/dark_rounded/loader.gif) no-repeat center center;
+    z-index: 10000;
+}

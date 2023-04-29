@@ -4,6 +4,7 @@ use App\Http\Controllers\AjaxController;
 
 Route::prefix('ajax')->group(function () {
     Route::post('get-subcategory', [AjaxController::class, 'GetGubcategory']);
+    Route::get('get-product', [AjaxController::class, 'GetProduct']);
     // Route::post('users-status', [AjaxController::class, 'UsersStatus']);
     // Route::post('image-upload', [AjaxController::class, 'ImageUpload']);
     // Route::any('load-image', [AjaxController::class, 'LoadImage']);

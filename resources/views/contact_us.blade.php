@@ -11,7 +11,7 @@
                                 <!-- <h1 class="pgtl">OUR PRODUCTS</h1> -->
                                 <ul class="breadcrumb">
                                     <li><a href="{{url('/')}}">Home</a></li>
-                                    <li><a href="#">Contact Us</a></li>
+                                    <li><a href="#">{{$page_content->page}}</a></li>
                                 </ul>
                             </div>
                         </div>

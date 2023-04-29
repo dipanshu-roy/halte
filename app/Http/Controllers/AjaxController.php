@@ -11,11 +11,16 @@ use Illuminate\Support\Str;
 use Auth;
 use DB;
 class AjaxController extends Controller{
-    public function __construct(){
-        $this->middleware('auth');
-    }
     public function GetGubcategory(Request $request){
         $data = ProductSubCategory::select('id','subcategory_name')->where('category_id',$request->category_id)->get();
+        if(!empty($data)){
+            return response()->json(['status'=>200,'data'=>$data]);
+        }else{
+            return response()->json(['status'=>400,'data'=>'']);
+        }
+    }
+    public function GetProduct(Request $request){
+        $data = DB::select("SELECT a.id,a.product_name,b.category_name,c.subcategory_name,d.barnd_name,a.product_slug,a.main_image,a.sub_images,a.mrps,a.sale_price FROM `products` as a INNER JOIN product_categories as b on a.category_id=b.id INNER JOIN product_sub_categories as c on a.subcategory_id=c.id INNER JOIN brands as d on a.brand_id=d.id LIMIT 16 OFFSET $request->offset");
         if(!empty($data)){
             return response()->json(['status'=>200,'data'=>$data]);
         }else{

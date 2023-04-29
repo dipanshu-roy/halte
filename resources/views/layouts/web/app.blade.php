@@ -32,165 +32,12 @@
 	<link href="{{asset('web/slick/slick-theme.css')}}" rel="stylesheet">
 	<link href="{{asset('web/css/jquery.fancybox.min.css')}}" rel="stylesheet" type="text/css">
 	<link href="{{asset('web/css/main-styles.css?x')}}" rel="stylesheet">
-	<link href="{{asset('web/css/responsive.css')}}" rel="stylesheet">
+	<link href="{{asset('web/css/responsive.css?=1')}}" rel="stylesheet">
 	
 </head>
 
 <body class="homepage">
-	<header id="header" class="hder gnhl">
-		<div class="container-fluid xl:w-auto">
-			<div class="navbar navbar-default" role="navigation" id="nav">
-				<div class="container plr0md fw xs-plr60">
-					<div class="col-sm-12 plr0md">
-						<div class="cntr-nv">
-
-							<div class="navbar-header">
-								<button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
-									data-target=".navbar-collapse">
-									<span class="icon-bar"></span>
-									<span class="icon-bar"></span>
-									<span class="icon-bar"></span>
-									<span class="sr-only">Toggle navigation</span>
-								</button>
-								<div class="logo"><a href="{{url('/')}}"><img src="{{asset('web/images/logo.png')}}" alt="{{config('app.name')}}"></a></div>
-							</div>
-
-							<div class="navbar-collapse collapse navbar-ex1-collapse">
-
-								<!-- search for mobile -->
-								<div class="mb-search">
-									<div class="cntr-search">
-										<form action="#" method="post" class="search-ds">
-											<div class="input-group">
-												<input type="text" class="form-control" placeholder="SEARCH PRODUCTS">
-												<div class="input-group-btn">
-													<button class="btn btn-search">
-														<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-															class="w-6 h-6 fill-current">
-															<path d="M0 0h24v24H0V0z" fill="none"></path>
-															<path
-																d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z">
-															</path>
-														</svg>
-													</button>
-												</div>
-											</div>
-										</form>
-									</div>
-									<div class="cntr-ac">
-										<a href="login.html" class="btn btn-ac">ACCOUNT</a>
-									</div>
-								</div>
-								<ul class="nav navbar-nav">
-									<li>
-										<a href="#" class="dropdown-toggle" data-toggle="dropdown">MENU <span class="caret"></span></a>
-										<ul class="dropdown-menu">
-											<li><a href="product-list.html">Products </a></li>
-											<li><a href="service-spares.html">Service &amp; Spares</a></li>
-											<li><a href="demo-installation.html">Demo</a></li>
-											<li><a href="demo-installation.html">Installation </a></li>
-											<li><a href="{{url('contact-us')}}">Contact Us</a></li>
-											<li><a href="offers.html">View All Offers</a></li>
-										</ul>
-									</li>
-									<li>
-										<a href="#" class="dropdown-toggle" data-toggle="dropdown">PRODUCTS <span class="caret"></span></a>
-										<ul class="dropdown-menu">
-											<li>
-												<a href="#" class="dropdown-toggle" data-toggle="dropdown">EXPLORE OUR RANGE <span class="caret"></span></a>
-												<ul class="dropdown-menu">
-													@php $sub_categories = DB::select("SELECT a.category_slug,b.subcategory_name,b.subcategory_slug FROM `product_categories` as a INNER JOIN product_sub_categories as b on a.id=b.category_id");@endphp
-													@if(!empty($sub_categories)) @foreach($sub_categories as $subcat)
-														<li><a href="{{url('ct/'.$subcat->category_slug.'/'.$subcat->subcategory_slug)}}">{{$subcat->subcategory_name}}</a></li>
-													@endforeach @endif
-												</ul>
-											</li>
-											<li>
-												<a href="#" class="dropdown-toggle" data-toggle="dropdown">EXPLORE BY BRAND <span class="caret"></span></a>
-												<ul class="dropdown-menu">
-													@if(!empty($get_brand))
-														@foreach($get_brand as $brand)
-														<li><a href="{{url('brand/'.$brand->barnd_slug)}}">{{$brand->barnd_name}}</a></li>
-														@endforeach
-													@endif
-												</ul>
-											</li>
-										</ul>
-									</li>
-									<li><a href="service-spares.html">SERVICE &AMP; SPARES</a></li>
-								</ul>
-							</div>
-
-						</div>
-
-						<!-- search for desktop -->
-						<div class="cntr-search">
-							<form action="#" method="post" class="search-ds">
-								<div class="input-group">
-									<input type="text" class="form-control" placeholder="SEARCH PRODUCTS">
-									<div class="input-group-btn">
-										<button class="btn btn-search">
-											<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-												class="w-6 h-6 fill-current">
-												<path d="M0 0h24v24H0V0z" fill="none"></path>
-												<path
-													d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z">
-												</path>
-											</svg>
-										</button>
-									</div>
-								</div>
-							</form>
-						</div>
-						<div class="cntr-ac">
-							<a href="login.html" class="btn btn-ac">ACCOUNT</a>
-						</div>
-						<!-- // -->
-
-						<!-- cart -->
-						<a href="cart.html" class="btn btn-cart">
-							<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
-								xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="59.333px"
-								height="53.667px" viewBox="0 0 59.333 53.667" enable-background="new 0 0 59.333 53.667"
-								xml:space="preserve">
-								<path fill="none" stroke="#000000" stroke-width="3.43" stroke-linecap="round"
-									stroke-linejoin="round" stroke-miterlimit="10" d="
-		M50.667,41.167h-28L8.334,1.5H1.667 M20.334,32.833h31.333L57.834,9.5H12.501 M28.438,44.792c-2.036,0-3.688,1.651-3.688,3.688
-		s1.651,3.688,3.688,3.688s3.688-1.651,3.688-3.688S30.474,44.792,28.438,44.792z M44.845,44.792c-2.036,0-3.688,1.651-3.688,3.688
-		s1.651,3.688,3.688,3.688s3.688-1.651,3.688-3.688S46.881,44.792,44.845,44.792z" />
-							</svg>
-						</a>
-						<!-- /cart -->
-
-					</div>
-
-				</div>
-
-				<!-- mobile search 2 -->
-				<div class="mb-search search-mb2">
-					<div class="cntr-search">
-						<form action="#" method="post" class="search-ds">
-							<div class="input-group">
-								<input type="text" class="form-control" placeholder="SEARCH PRODUCTS">
-								<div class="input-group-btn">
-									<button class="btn btn-search">
-										<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-											class="w-6 h-6 fill-current">
-											<path d="M0 0h24v24H0V0z" fill="none"></path>
-											<path
-												d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z">
-											</path>
-										</svg>
-									</button>
-								</div>
-							</div>
-						</form>
-					</div>
-					<!--  -->
-				</div>
-
-			</div>
-	</header>
+	@include('layouts.web.sidebar')
 	<div class="clearfix"></div>
     @yield('content')
     <section id="btmftr" class="ftrsn">
@@ -199,6 +46,7 @@
 			<div class="clm3">
 				<h3 class="h3ftr">EXPLORE OUR RANGE <span class="hr"></span></h3>
 				<ul class="lsftrln mrb0-sm">
+				@php $sub_categories = DB::select("SELECT a.category_slug,b.subcategory_name,b.subcategory_slug,b.banner_image FROM `product_categories` as a INNER JOIN product_sub_categories as b on a.id=b.category_id"); @endphp
 					@if(!empty($sub_categories)) @foreach($sub_categories as $subcat)
 						<li><a href="{{url('ct/'.$subcat->category_slug.'/'.$subcat->subcategory_slug)}}">{{$subcat->subcategory_name}}</a></li>
 					@endforeach @endif
@@ -220,16 +68,13 @@
 			<div class="clm3">
 				<h3 class="h3ftr">Useful Links <span class="hr"></span></h3>
 				<ul class="lsftrln">
-					<li><a href="about.html">About Us</a></li>
-					<li><a href="contact-us.html">Contact Us</a></li>
-					<li><a href="become-a-dealer.html">Become A Dealer</a></li>
-					<li><a href="news-media.html">News &amp; Media</a></li>
-					<li><a href="offers.html">Offers</a></li>
-					<li><a href="terms-conditions.html">Terms &amp; Conditions</a></li>
-					<li><a href="service-spares.html">Spares &amp; Service</a></li>
-					<li><a href="blog.html">Blog</a></li>
-					<li><a href="demo-installation.html">Demo &amp; Installation</a></li>
-					<li><a href="support.html">Support</a></li>
+					@php $pages = App\Models\PageContent::select('page','page_name')->get();@endphp
+					@if(!empty($pages)) @foreach($pages as $page)
+						<li><a href="{{url($page->page_name)}}">{{$page->page}}</a></li>
+					@endforeach @endif
+					<li><a href="{{url('news-and-media')}}">News And Media</a></li>
+					<li><a href="{{url('blogs')}}">Blogs</a></li>
+					<li><a href="{{url('support')}}">Support</a></li>
 				</ul>
 			</div>
 			<div class="clm3">
@@ -286,6 +131,7 @@
 
 	<a href="#0" class="cd-top">Back To Top</a>
 	<a href="https://api.whatsapp.com/send?phone=919914130130&text=I%20am%20interested" class="wa"></a>
+	<div id="loader"></div>
 	<script src="{{asset('web/js/jquery.js')}}"></script>
 	<script src="{{asset('web/js/jquery-1.11.0.min.js')}}" type="text/javascript"></script>
 	<script src="{{asset('web/js/jquery-migrate-1.2.1.min.js')}}" type="text/javascript"></script>
@@ -312,6 +158,7 @@
        Swal.fire('Failed','{{session('error')}}','error');
     </script>
     @endif
+	@stack('script')
 	<script>
 		// $(window).on('load', function () {
 		// 	$('#offers-pp').fancybox({
