@@ -3,10 +3,12 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
-use App\User;
+use App\Models\User;
 use App\Models\ProductSubCategory;
 use App\Models\Creadit;
 use App\Models\Debit;
+use App\Models\Faq;
+use App\Models\Review;
 use Illuminate\Support\Str;
 use Auth;
 use DB;
@@ -20,11 +22,73 @@ class AjaxController extends Controller{
         }
     }
     public function GetProduct(Request $request){
-        $data = DB::select("SELECT a.id,a.product_name,b.category_name,c.subcategory_name,d.barnd_name,a.product_slug,a.main_image,a.sub_images,a.mrps,a.sale_price FROM `products` as a INNER JOIN product_categories as b on a.category_id=b.id INNER JOIN product_sub_categories as c on a.subcategory_id=c.id INNER JOIN brands as d on a.brand_id=d.id LIMIT 16 OFFSET $request->offset");
+        $where ='WHERE a.status=1 ';
+        if(!empty($request->ct)){
+            $where .= "AND b.category_slug='$request->ct' ";
+        }if(!empty($request->sub)){
+            $where .= "AND c.subcategory_slug='$request->sub' ";
+        }
+        if(!empty($request->br)){
+            $where .= "AND d.barnd_slug='$request->br' ";
+        }
+        $data = DB::select("SELECT a.id,a.product_name,b.category_name,c.subcategory_name,c.subcategory_slug,d.barnd_name,a.product_slug,a.main_image,a.sub_images,a.mrps,a.sale_price FROM `products` as a INNER JOIN product_categories as b on a.category_id=b.id INNER JOIN product_sub_categories as c on a.subcategory_id=c.id INNER JOIN brands as d on a.brand_id=d.id $where ORDER BY a.id DESC LIMIT 16 OFFSET $request->offset");
         if(!empty($data)){
             return response()->json(['status'=>200,'data'=>$data]);
         }else{
             return response()->json(['status'=>400,'data'=>'']);
+        }
+    }
+    public function GetProductSuggestion(Request $request){
+        $data = DB::select("SELECT a.id,a.product_name,b.category_name,c.subcategory_name,c.subcategory_slug,d.barnd_name,a.product_slug,a.main_image,a.sub_images,a.mrps,a.sale_price FROM `products` as a INNER JOIN product_categories as b on a.category_id=b.id INNER JOIN product_sub_categories as c on a.subcategory_id=c.id INNER JOIN brands as d on a.brand_id=d.id ORDER BY a.id");
+        if(!empty($data)){
+            return response()->json(['status'=>200,'data'=>$data]);
+        }else{
+            return response()->json(['status'=>400,'data'=>'']);
+        }
+    }
+    public function GetProductBySubcat(Request $request){
+        $data = DB::select("SELECT a.id,a.product_name,a.main_image,e.sku FROM `products` as a INNER JOIN product_categories as b on a.category_id=b.id INNER JOIN product_sub_categories as c on a.subcategory_id=c.id INNER JOIN brands as d on a.brand_id=d.id LEFT JOIN product_specifications as e on e.product_id=a.id WHERE a.subcategory_id=$request->sub_cat ORDER BY a.id DESC ");
+        if(!empty($data)){
+            return response()->json(['status'=>200,'data'=>$data]);
+        }else{
+            return response()->json(['status'=>400,'data'=>'']);
+        }
+    }
+    public function GetFaq(Request $request){
+        if(!empty($request->question_answer)){
+            $data = Faq::where('category_id',$request->cat_id)->Where('title', 'like', '%'.$request->question_answer.'%')->skip(0)->take(4)->orderBy('id','DESC')->get();
+        }else{
+            $data = Faq::where('category_id',$request->cat_id)->skip(0)->take(4)->orderBy('id','DESC')->get();
+        }
+        if(!empty($data)){
+            return response()->json(['status'=>200,'data'=>$data]);
+        }else{
+            return response()->json(['status'=>400,'data'=>'']);
+        }
+    }
+    function OtpSendForLogin(request $request){
+        $phone = $request->users_id;
+        $otp=sprintf("%06d", mt_rand(1, 999999));
+        $users = User::where('mobile',$phone)->first();
+        if(!empty($users)){
+            $select = User::where('id',$users->id)->first();
+            $select->otp = $otp;
+            $select->save();
+            // $sms_msg="Your OTP to register/access ONLINEGGS is ".$otp;
+            // $this->sms_send($phone,$sms_msg);
+            return response()->json(array('status'=>200,'message'=>"OTP sent to your mobile no."));
+        }else{
+            return response()->json(array('status'=>400,'message'=>'User not found'));
+        }
+    }
+    function OtpMatch(request $request){
+        $phone = $request->users_id;
+        $users = User::where('mobile',$phone)->where('otp',$request->otp)->first();
+        if(!empty($users)){
+            Auth::login($users);
+            return response()->json(array('status'=>200,'message'=>"Login successfully"));
+        }else{
+            return response()->json(array('status'=>400,'message'=>'Sorry! wrong OTP'));
         }
     }
 

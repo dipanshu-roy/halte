@@ -153,67 +153,54 @@
                     <div class="card-body">
                         <div class="col-md-12">
                             <div class="table-responsive">
-                                <table class="table">
+                                <table id="example" class="display" style="width:100%">
                                     <thead class="text-primary">
                                         <tr>
                                             <th>S. No.</th>
                                             <th>Status</th>
                                             <th>Rating</th>
-                                            <th>On</th>
-                                            <th>Order ID</th>
-                                            <th colspan="2">Product</th>
-                                            <th>Name</th>
-                                            <th>Email/Mobile</th>
-                                            <th>Review Title</th>
-                                            <th>Detail</th>
+                                            <th>User</th>
+                                            <th>Product</th>
+                                            <th>Title</th>
+                                            <th>Description</th>
+                                            <th>Created At</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr class="tac">
-                                            <td>1</td>
-                                            <td><span class="text-danger">Unapprove</span></td>
+                                        @if(!empty($reviews))
+                                        @foreach($reviews as $row)
+                                        <tr>
+                                            <td>{{$loop->iteration}}</td>
                                             <td>
-                                                <div class="Stars" style="--rating: 4;" aria-label=""> </div>
-                                            </td>
-                                            <td>10-Apr-2023</td>
-                                            <td><a href="order-details.html">ORD45545</a></td>
-                                            <td><img src="../assets/img/product-1.jpg" width="50"></td>
-                                            <td>Electric Lawn Mower 12 Inches</td>
-                                            <td>Rohan</td>
-                                            <td>email@gmail.com / 981298123</td>
-                                            <td>Great! Value for money</td>
-                                            <td><a href="#" data-toggle="modal" data-target="#review-details">View
-                                                    Detail</a></td>
-                                            <td><a href="#" data-toggle="modal" data-target="#review-details">Update</a>
-                                                / <a href="#">Delete</a></td>
-                                        </tr>
-
-                                        <tr class="tac">
-                                            <td>2</td>
-                                            <td><span class="text-success">Closed</span></td>
+                                                @if($row->status==1)
+                                                    <a href="{{url('admin/reviews-unapprove',$row->id)}}" class="text-danger">Approved</a></td>
+                                                @else
+                                                    <a href="{{url('admin/reviews-approve',$row->id)}}" class="text-success">Unapprove</a></td>
+                                                @endif
                                             <td>
-                                                <div class="Stars" style="--rating: 5;" aria-label=""> </div>
+                                                @for($i=0;$i < $row->rating;$i++)
+                                                    <i class="fa fa-star" style="color:#ffcc00"><i>
+                                                @endfor
                                             </td>
-                                            <td>10-Apr-2023</td>
-                                            <td><a href="order-details.html">ORD45545</a></td>
-                                            <td><img src="../assets/img/product-1.jpg" width="50"></td>
-                                            <td>Electric Lawn Mower 12 Inches</td>
-                                            <td>Rohan</td>
-                                            <td>email@gmail.com / 981298123</td>
-                                            <td>Superb Product</td>
-                                            <td><a href="#" data-toggle="modal" data-target="#review-details">View
-                                                    Detail</a></td>
-                                            <td><a href="#" data-toggle="modal" data-target="#review-details">Update</a>
-                                                / <a href="#">Delete</a></td>
+                                            <td>{{$row->name}}<br/>{{$row->email}}</td>
+                                            <td>{{$row->product_name}} <img src="{{asset($row->main_image)}}" style="width:30px;height:30px"></td>
+                                            <td>{{$row->title}}</td>
+                                            <td>{{$row->description}}</td>
+                                            <td>{{$row->created_at}}</td>
+                                            <td>
+                                                <a onclick="return confirm('Are you sure you want to delete this ?');" href="{{url('admin/delete-reviews',$row->id)}}">Delete</a>
+                                            </td>
                                         </tr>
+                                        @endforeach
+                                        @endif
                                     </tbody>
                                 </table>
                             </div>
                         </div>
                         <br>
                         <br>
-                        <a href="reviews.html" class="btn">View All</a>
+                        <a href="{{url('admin/reviews')}}" class="btn">View All</a>
                         <h3 class="card-title"></h3>
                         <hr>
                         <div class="table-responsive">

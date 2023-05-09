@@ -4,10 +4,22 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	@if(!empty($selected_subcategories))
+	@if(!empty($home->page_title))
+		<title>{{$home->page_title}}</title>
+		<meta name="description" content="{{$home->page_description}}">
+		<meta name="keywords" content="{{$home->page_keywords}}">
+	@elseif(!empty($selected_subcategories))
 		<title>{{$selected_subcategories->page_title}}</title>
 		<meta name="description" content="{{$selected_subcategories->page_description}}">
 		<meta name="keywords" content="{{$selected_subcategories->page_keywords}}">
+	@elseif(!empty($news_media))
+		<title>{{$news_media->page_title}}</title>
+		<meta name="description" content="{{$news_media->page_description}}">
+		<meta name="keywords" content="{{$news_media->page_keywords}}">
+	@elseif(!empty($page_content))
+		<title>{{$page_content->page_title}}</title>
+		<meta name="description" content="{{$page_content->page_description}}">
+		<meta name="keywords" content="{{$page_content->page_keywords}}">
 	@elseif(!empty($get_selected_brand))
 		<title>{{$get_selected_brand->barnd_name}}</title>
 		<meta name="description" content="{{$get_selected_brand->barnd_name}}">
@@ -46,7 +58,7 @@
 			<div class="clm3">
 				<h3 class="h3ftr">EXPLORE OUR RANGE <span class="hr"></span></h3>
 				<ul class="lsftrln mrb0-sm">
-				@php $sub_categories = DB::select("SELECT a.category_slug,b.subcategory_name,b.subcategory_slug,b.banner_image FROM `product_categories` as a INNER JOIN product_sub_categories as b on a.id=b.category_id"); @endphp
+				@php $sub_categories = DB::select("SELECT a.category_slug,b.subcategory_name,b.subcategory_slug,b.banner_image FROM `product_categories` as a INNER JOIN product_sub_categories as b on a.id=b.category_id LIMIT 10 OFFSET 0"); @endphp
 					@if(!empty($sub_categories)) @foreach($sub_categories as $subcat)
 						<li><a href="{{url('ct/'.$subcat->category_slug.'/'.$subcat->subcategory_slug)}}">{{$subcat->subcategory_name}}</a></li>
 					@endforeach @endif
@@ -55,14 +67,10 @@
 			<div class="clm3">
 				<h3 class="h3ftr hnmb">&nbsp;</h3>
 				<ul class="lsftrln">
-					<li><a href="product-list.html">Gensets</a></li>
-					<li><a href="product-list.html">Snowchains</a></li>
-					<li><a href="product-list.html">Tillers</a></li>
-					<li><a href="product-list.html">Glues</a></li>
-					<li><a href="product-list.html">Tapes</a></li>
-					<li><a href="product-list.html">Adhesives</a></li>
-					<li><a href="product-list.html">DIY</a></li>
-					<li><a href="product-list.html">Fogging Machine</a></li>
+					@php $sub_categories = DB::select("SELECT a.category_slug,b.subcategory_name,b.subcategory_slug,b.banner_image FROM `product_categories` as a INNER JOIN product_sub_categories as b on a.id=b.category_id LIMIT 10 OFFSET 10"); @endphp
+						@if(!empty($sub_categories)) @foreach($sub_categories as $subcat)
+							<li><a href="{{url('ct/'.$subcat->category_slug.'/'.$subcat->subcategory_slug)}}">{{$subcat->subcategory_name}}</a></li>
+						@endforeach @endif
 				</ul>
 			</div>
 			<div class="clm3">
@@ -74,7 +82,6 @@
 					@endforeach @endif
 					<li><a href="{{url('news-and-media')}}">News And Media</a></li>
 					<li><a href="{{url('blogs')}}">Blogs</a></li>
-					<li><a href="{{url('support')}}">Support</a></li>
 				</ul>
 			</div>
 			<div class="clm3">
@@ -82,15 +89,18 @@
 					<span>Need Help?</span><br>
 					Ask our Expert <span class="hr"></span>
 				</h3>
-				<form action="#" method="post" class="form-dk">
+				<form method="post" action="{{url('want-to-become-dealer')}}" autocomplete="off"  class="form-dk">
+                    @csrf
 					<div class="form-group">
-						<input type="text" class="form-control" name="nameft" id="nameft" placeholder="Name">
+						<input type="text" class="form-control" name="name" id="name" placeholder="Name" required>
 					</div>
 					<div class="form-group">
-						<input type="text" class="form-control" name="mobileft" id="mobileft" placeholder="Mobile">
+						<input type="text" class="form-control" name="mobile" id="mobile" placeholder="Mobile" required>
 					</div>
 					<div class="form-group">
-						<input type="text" class="form-control" name="emailft" id="emailft" placeholder="Email">
+						<input type="email" class="form-control" name="email" id="email" placeholder="Email" required>
+						<input type="hidden" class="form-control" name="city" id="city" value="Na">
+						<input type="hidden" class="form-control" name="description" id="description" value="Need Help Page">
 					</div>
 					<div class="form-group">
 						<button class="btn btnfrmft">SUBMIT</button>
@@ -106,11 +116,12 @@
 				</div>
 				<div class="clm6">
 					<ul class="social-ft">
-						<li><a href="#"><i class="fa fa-facebook"></i></a></li>
-						<li><a href="#"><i class="fa fa-instagram"></i></a></li>
-						<li><a href="#"><i class="fa fa-twitter"></i></a></li>
-						<li><a href="#"><i class="fa fa-youtube-play"></i></a></li>
-						<li><a href="#"><i class="fa fa-linkedin"></i></a></li>
+					    @php $home = App\Models\Home::select('facebook','insta','twitter','youtube','linkdin','whatsapp_no')->where('id',1)->first();@endphp
+						<li><a href="{{$home->facebook}}"><i class="fa fa-facebook"></i></a></li>
+						<li><a href="{{$home->insta}}"><i class="fa fa-instagram"></i></a></li>
+						<li><a href="{{$home->twitter}}"><i class="fa fa-twitter"></i></a></li>
+						<li><a href="{{$home->youtube}}"><i class="fa fa-youtube-play"></i></a></li>
+						<li><a href="{{$home->linkdin}}"><i class="fa fa-linkedin"></i></a></li>
 					</ul>
 				</div>
 			</div>
@@ -126,11 +137,14 @@
 		</div>
 		<img src="{{asset('web/images/offer-festive.jpg')}}" alt="" class="img-responsive">
 	</div>
-
-
-
 	<a href="#0" class="cd-top">Back To Top</a>
-	<a href="https://api.whatsapp.com/send?phone=919914130130&text=I%20am%20interested" class="wa"></a>
+	@if(Request::segment(1)=='brand')
+		<a target="_blank" href="https://api.whatsapp.com/send?phone=@if(!empty($selected_brand->whatsapp)){{$selected_brand->whatsapp}}@endif&text=I%20am%20interested" class="wa"></a>
+	@elseif(Request::segment(1)=='pr')
+		<a target="_blank" href="https://api.whatsapp.com/send?phone=@if(!empty($products->whatsapp)){{$products->whatsapp}}@endif&text=I%20am%20interested" class="wa"></a>
+	@else
+		<a target="_blank" href="https://api.whatsapp.com/send?phone=@if(!empty($home->whatsapp_no)){{$home->whatsapp_no}}@endif&text=I%20am%20interested" class="wa"></a>
+	@endif
 	<div id="loader"></div>
 	<script src="{{asset('web/js/jquery.js')}}"></script>
 	<script src="{{asset('web/js/jquery-1.11.0.min.js')}}" type="text/javascript"></script>

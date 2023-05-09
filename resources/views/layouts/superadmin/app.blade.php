@@ -76,7 +76,7 @@
                                 <li class="nav-item ">
                                     <a class="nav-link" href="{{url('admin/product/add-brand')}}">
                                         <span class="sidebar-mini"> </span>
-                                        <span class="sidebar-normal">Add Brand</span>
+                                        <span class="sidebar-normal">Add Brands</span>
                                     </a>
                                 </li>
                                 <li class="nav-item ">
@@ -107,7 +107,7 @@
                                 </li>
 
                                 <li class="nav-item ">
-                                    <a class="nav-link" href="add-better-together-product.html">
+                                    <a class="nav-link" href="{{url('admin/add-better-together-product')}}">
                                         <span class="sidebar-mini"> </span>
                                         <span class="sidebar-normal">Add Better Together</span>
                                     </a>
@@ -127,13 +127,13 @@
                         <div class="collapse" id="orders">
                             <ul class="nav">
                                 <li class="nav-item ">
-                                    <a class="nav-link" href="view-order.html">
+                                    <a class="nav-link" href="{{url('admin/view-order')}}">
                                         <span class="sidebar-mini"> </span>
                                         <span class="sidebar-normal">View Order</span>
                                     </a>
                                 </li>
                                 <li class="nav-item ">
-                                    <a class="nav-link" href="order-reports.html">
+                                    <a class="nav-link" href="{{url('admin/order-reports')}}">
                                         <span class="sidebar-mini"> </span>
                                         <span class="sidebar-normal">Order Reports</span>
                                     </a>
@@ -146,28 +146,28 @@
 
 
                     <li class="nav-item">
-                        <a class="nav-link" href="users.html">
+                        <a class="nav-link" href="{{url('admin/users-customers')}}">
                             <i class="material-icons"></i>
                             <p>Users/Customers</p>
                         </a>
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" href="tickets.html">
+                        <a class="nav-link" href="{{url('admin/tickets')}}">
                             <i class="material-icons"></i>
                             <p>Tickets</p>
                         </a>
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" href="reviews.html">
+                        <a class="nav-link" href="{{url('admin/reviews')}}">
                             <i class="material-icons"></i>
                             <p>Reviews</p>
                         </a>
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" href="add-offers.html">
+                        <a class="nav-link" href="{{url('admin/add-offers')}}">
                             <i class="material-icons"></i>
                             <p>Offers</p>
                         </a>

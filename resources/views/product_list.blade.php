@@ -206,9 +206,14 @@ $(document).ready(function(){
 function loadCurrentPage(offset){
 	var spinner = $('#loader');
     $('#product_data').empty('');
+	@if(!empty(Request::segment(3)))
+		var pr = "?ct={{Request::segment(2)}}&sub={{Request::segment(3)}}";
+	@else
+		var pr = "?br={{Request::segment(2)}}";
+	@endif
     $.ajax({
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-        url: "{{url('ajax/get-product')}}?offset="+offset+"",
+        url: "{{url('ajax/get-product')}}"+pr+"&offset="+offset+"",
         type: 'GET',
         data:{
             manual:$('#manual').val(),
@@ -245,14 +250,13 @@ function PageData(datas){
     for (var i=0; i < datas.length; i++) {
         html += `<div class="col-sm-3 col-xs-6">
 			<div class="prd-cntr">
-				<a href="product-page.html">
+				<a href="{{url('pr')}}/`+datas[i].subcategory_slug+`/`+datas[i].product_slug+`">
 					<div class="pro-im">
 						<img src="{{asset('`+datas[i].main_image+`')}}" class="">
 					</div>
 					<div class="prod-card-price">
 						<div class="bndl-prod-price-sale"><i class="fa fa-inr"></i>`+addCommas(datas[i].sale_price)+`</div>
-						<div class="bndl-prod-price-mrps"><i class="fa fa-inr"></i> <span>`+addCommas(datas[i].mrps)+`</span>
-							Save 28%</div>
+						<div class="bndl-prod-price-mrps"><i class="fa fa-inr"></i> <span>`+addCommas(datas[i].mrps)+`</span> Save 28%</div>
 					</div>
 
 					<div class="prod-card-rating">

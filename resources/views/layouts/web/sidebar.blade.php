@@ -12,7 +12,8 @@
                                 <span class="icon-bar"></span>
                                 <span class="sr-only">Toggle navigation</span>
                             </button>
-                            <div class="logo"><a href="{{url('/')}}"><img src="{{asset('web/images/logo.png')}}" alt="{{config('app.name')}}"></a></div>
+                            @php $home = App\Models\Home::where('id',1)->first();@endphp
+                            <div class="logo"><a href="{{url('/')}}">@if(!empty($home->logo))<img src="{{asset($home->logo)}}" alt="{{config('app.name')}}">@endif</a></div>
                         </div>
                         <div class="navbar-collapse collapse navbar-ex1-collapse">
                             <div class="mb-search">
@@ -35,7 +36,14 @@
                                     </form>
                                 </div>
                                 <div class="cntr-ac">
+                                @guest
                                     <a href="{{url('account/login')}}" class="btn btn-ac">ACCOUNT</a>
+                                @else
+                                    <a href="{{route('logout')}}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="btn btn-ac">LOGOUT</a>
+                                    <form id="logout-form" action="{{route('logout')}}" method="POST" class="d-none">
+                                        @csrf
+                                    </form>
+                                @endguest
                                 </div>
                             </div>
                             <ul class="nav navbar-nav">
@@ -73,7 +81,7 @@
                                         </li>
                                     </ul>
                                 </li>
-                                <li><a href="service-spares.html">SERVICE &AMP; SPARES</a></li>
+                                <li><a href="{{url('spares-and-services')}}">SERVICE &AMP; SPARES</a></li>
                             </ul>
                         </div>
                     </div>
@@ -96,14 +104,16 @@
                         </form>
                     </div>
                     <div class="cntr-ac">
-                        <a href="{{url('account/login')}}" class="btn btn-ac">ACCOUNT</a>
+                        @guest
+                            <a href="{{url('account/login')}}" class="btn btn-ac">ACCOUNT</a>
+                        @else
+                            <a href="{{route('logout')}}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="btn btn-ac">LOGOUT</a>
+                            <form id="logout-form" action="{{route('logout')}}" method="POST" class="d-none">
+                                @csrf
+                            </form>
+                        @endguest
                     </div>
                     <a href="{{route('cart')}}" class="btn btn-cart">
-                        @php $total = 0 @endphp
-                        @foreach((array) session('cart') as $id => $details)
-                            @php $total += $details['quantity'] @endphp
-                        @endforeach
-                        @if(!empty($total)) {{$total}} @endif
                         <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
                             xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="59.333px"
                             height="53.667px" viewBox="0 0 59.333 53.667" enable-background="new 0 0 59.333 53.667"

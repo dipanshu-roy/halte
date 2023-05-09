@@ -17,7 +17,7 @@
   <label class="col-sm-2 col-form-label">Text</label>
   <div class="col-sm-10">
     <div class="form-group bmd-form-group textarea">
-      <textarea name="text" id="" class="form-control" rows="10" value=""></textarea>
+      <textarea name="text" id="" class="form-control" rows="10">@if(!empty($resultNewsMe->text)){{$resultNewsMe->text}}@endif</textarea>
     </div>
   </div>
 </div>
@@ -97,7 +97,7 @@
   <label class="col-sm-2 col-form-label">Page Title</label>
   <div class="col-sm-10">
     <div class="form-group bmd-form-group textarea">
-      <input name="page_title" id="" maxlength="100" class="form-control" type="text" value="">
+      <input name="page_title" id="" maxlength="100" class="form-control" type="text" value="@if(!empty($resultNewsMe->page_title)){{$resultNewsMe->page_title}}@endif">
       <p class="small">For SEO</p>
     </div>
   </div>
@@ -107,7 +107,7 @@
   <label class="col-sm-2 col-form-label">Description</label>
   <div class="col-sm-10">
     <div class="form-group bmd-form-group textarea">
-      <input name="description" id="" class="form-control" type="text" value="">
+      <input name="description" id="" class="form-control" type="text" value="@if(!empty($resultNewsMe->description)){{$resultNewsMe->description}}@endif">
       <p class="small">For SEO</p>
     </div>
   </div>
@@ -117,7 +117,7 @@
   <label class="col-sm-2 col-form-label">Keywords</label>
   <div class="col-sm-10">
     <div class="form-group bmd-form-group textarea">
-      <input name="keywords" id="" maxlength="100" class="form-control" type="text" value="">
+      <input name="keywords" id="" maxlength="100" class="form-control" type="text" value="@if(!empty($resultNewsMe->keywords)){{$resultNewsMe->keywords}}@endif">
       <p class="small">For SEO</p>
     </div>
   </div>

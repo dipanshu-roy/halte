@@ -1,5 +1,10 @@
 @extends('layouts.web.app')
 @section('content')
+<style>
+    .razorpay-payment-button{
+        display:none;
+    }
+</style>
 <section id="prod-insldr" class="no-margin nsdbn">
     <div class="carousel slide">
         <div class="carousel-inner">
@@ -43,8 +48,18 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @php $total=0; @endphp
                     @if(!empty($cart_data)) @foreach($cart_data as $rows)
-                    @php $cart = session()->get('cart'); $quantity  = $cart[$rows->id]['quantity']; @endphp
+                    @php 
+                        $cart = session()->get('cart'); 
+                        if(!empty($cart)){
+                            $quantity  = $cart[$rows->id]['quantity'];
+                        }else{
+                            $select = App\Models\Cart::select('quantity')->where('user_id',Auth::user()->id)->where('product_id',$rows->id)->first();
+                            $quantity = $select->quantity;
+                        }
+                        $total += $rows->sale_price*$quantity;
+                    @endphp
                     <tr class="prod-cart-tr" data-id="{{$rows->id}}">
                         <td data-th="Product" valign="middle" class="cart-prod-img">
                             <img src="{{asset($rows->main_image)}}" alt="{{$rows->product_name}}" width="80">
@@ -79,49 +94,45 @@
         <div class="col-sm-6">
             <h4 class="cart-total">HAVE A COUPON?</h4>
             <div class="coupon-form">
-                <form action="" method="post" class="">
+                <form action="@php echo !empty(session()->get('coupon')['coupon'])? url('remove-coupon'):url('apply-coupon');@endphp" method="post" class="">
+                    @csrf
                     <div class="col-sm-5 plr0">
                         <div class="form-group">
-                            <input type="text" class="form-control" placeholder="Coupon Code">
+                            <input type="text" class="form-control" name="coupon" placeholder="Coupon Code" value="@php echo !empty(session()->get('coupon')['coupon'])? session()->get('coupon')['coupon']:'';@endphp" @php echo !empty(session()->get('coupon')['coupon'])? 'readonly':'';@endphp>
+                            <input type="hidden" class="form-control" name="min_booking" value="{{$total}}">
                         </div>
                     </div>
                     <div class="col-sm-5 plr0">
                         <div class="form-group">
-                            <button class="btn btn-secondary">Apply Coupon</button>
+                            <button type="submit" class="btn btn-secondary">@php echo !empty(session()->get('coupon')['coupon'])? 'Remove Coupon':'Apply Coupon';@endphp</button>
                         </div>
                     </div>
                 </form>
             </div>
-
             <div class="row">
+                @if(!empty($offer_coupn)) @foreach($offer_coupn as $offer)
                 <div class="col-sm-6">
                     <div class="offer-prod">
                         <div class="col-sm-12 plr0">
                             <div class="ofr-bx">
-                                <h3 class="h3ofr-tl">Summer Offer</h3>
+                                <h3 class="h3ofr-tl">{{$offer->title}}</h3>
                                 <p class="ofr-lead">
-                                    10% Instant Discount up to INR 500 on Prepaid Trxns. Min purchase value INR 2000
-                                    Use <b>Coupon Code: SUMMER10</b>.
+                                    @if($offer->offer_type==2) {{$offer->offer_value}}% @else RS {{$offer->offer_value}} @endif
+                                    Instant Discount up to INR @php
+                                    if($offer->offer_type==2){
+                                        echo round($offer->min_booking/100*$offer->offer_value);
+                                    }else{
+                                        echo $offer->offer_value;
+                                    }
+                                    @endphp. Min purchase value INR {{$offer->min_booking}}
+                                    Use <b>Coupon Code: {{$offer->code}}</b>.
                                 </p>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-6">
-                    <div class="offer-prod">
-                        <div class="col-sm-12 plr0">
-                            <div class="ofr-bx">
-                                <h3 class="h3ofr-tl">Summer Offer</h3>
-                                <p class="ofr-lead">
-                                    10% Instant Discount up to INR 500 on Prepaid Trxns. Min purchase value INR 2000
-                                    Use <b>Coupon Code: SUMMER10</b>.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                @endforeach @endif
             </div>
-
         </div>
         <div class="col-sm-6">
             <div class="total-wrapper">
@@ -134,7 +145,7 @@
                                 <p class="tlprc"><span class="sml">Subtotal</span></p>
                             </td>
                             <td width="60%">
-                                <p class="tlprc"><span class="sml"><i class="fa fa-inr"></i></span>149</p>
+                                <p class="tlprc"><span class="sml"><i class="fa fa-inr"></i></span>{{number_format($total,2)}}</p>
                             </td>
                         </tr>
                         <tr>
@@ -167,41 +178,77 @@
                                 </div>
                             </td>
                         </tr>
-
+                        @php 
+                        $discounted = 0;
+                        $percent = 0;
+                        $amount = 0;
+                        if(!empty(session()->get('coupon')['offer_type'])){ @endphp
                         <tr>
+                            <td><p class="tlprc"><span class="sml">Discount/Coupon </span></p></td>
                             <td>
-                                <p class="tlprc"><span class="sml">Discount/Coupon </span></p>
-                            </td>
-                            <td>
-                                <p class="tlprc">- <span class="sml"><i class="fa fa-inr"></i></span>200</p>
+                                <p class="tlprc">- <span class="sml"><i class="fa fa-inr"></i></span>
+                                @php $offer_type = session()->get('coupon')['offer_type'];
+                                    $offer_value = session()->get('coupon')['offer_value'];
+                                    if($offer_type==2){
+                                        $off = $total/100*$offer_value;
+                                        echo number_format($off,2);
+                                        $percent =  $total - $off;
+                                        $discounted = $percent;
+                                    }else{
+                                        echo $offer_value;
+                                        $amount = $offer_value;
+                                        $discounted = $total-$amount;
+                                    }
+                                @endphp</p>
                             </td>
                         </tr>
-
+                        <tr>
+                            <td><p class="tlprc"><span class="sml">Discounted Amount </span></p></td>
+                            <td>
+                                <p class="tlprc"><span class="sml"><i class="fa fa-inr"></i></span>{{$discounted}}</p>
+                            </td>
+                        </tr>
+                        @php } @endphp
                         <tr>
                             <td>
                                 <p class="tlprc"><span class="sml">GST </span> <span class="vsml">@ 18%</span></p>
                             </td>
                             <td>
-                                <p class="tlprc"><span class="sml"><i class="fa fa-inr"></i></span>149</p>
+                                <p class="tlprc"><span class="sml"><i class="fa fa-inr"></i></span>
+                                @php if(!empty($percent)){
+                                    $gst = $percent/100*18;
+                                    echo number_format($gst,2);
+                                }else{
+                                    $totals = $total-$amount;
+                                    $gst = $totals/100*18;
+                                    echo number_format($gst,2);
+                                }@endphp</p>
                             </td>
                         </tr>
-
-
-
                         <tr>
                             <td>
                                 <p class="tlprc"><span class="">Total</span></p>
                             </td>
                             <td>
-                                <p class="tlprc"><span class="sml"><i class="fa fa-inr"></i></span>149</p>
+                                <p class="tlprc"><span class="sml"><i class="fa fa-inr"></i></span>@if(!empty($discounted)){{number_format($discounted+$gst,2)}}@else{{number_format($total+$gst,2)}}@endif </p>
                             </td>
                         </tr>
-
                         <tr>
-                            <td colspan="2"><a href="login.html" class="btn btn-primary btn-block "> PROCEED TO
-                                    CHECKOUT <i class="fa fa-angle-right"></i></a>
+                            <td colspan="2">
+                                @if(!empty(Auth::user()))
+                                <a href="{{url('checkout')}}" class="btn btn-primary btn-block "> PROCEED TO CHECKOUT <i class="fa fa-angle-right"></i></a>
+                                <form action="{{url('/payment-complete')}}" method="POST" hidden>
+                                    @csrf
+                                    <input type="text" class="form-control" id="rzp_paymentid" name="rzp_paymentid">
+                                    <input type="text" class="form-control" id="rzp_orderid" name="rzp_orderid">
+                                    <input type="text" class="form-control" id="rzp_signature" name="rzp_signature">
+                                    <button type="submit" id="rzp-paymentresponse" class="btn btn-primary">Submit</button>
+                                </form>
+                                <a id="rzp-button1" class="btn btn-primary btn-block "> PROCEED TO CHECKOUT <i class="fa fa-angle-right"></i></a>
+                                @else
+                                <a href="{{url('account/login')}}" class="btn btn-primary btn-block "> PROCEED TO CHECKOUT <i class="fa fa-angle-right"></i></a>
+                                @endif
                             </td>
-
                         </tr>
                     </tbody>
                 </table>
@@ -216,14 +263,15 @@
 
 
             <div class="prodhmsldr">
+                @if(!empty($similar_pr)) @foreach($similar_pr as $rows)
                 <div class="prd-cntr">
-                    <a href="#">
+                    <a href="{{url('pr')}}/{{$rows->subcategory_slug}}/{{$rows->product_slug}}">
                         <div class="pro-im">
-                            <img src="images/product-hm1.jpg" class="">
+                            <img src="{{asset($rows->main_image)}}" class="">
                         </div>
                         <div class="prod-card-price">
-                            <div class="bndl-prod-price-sale"><i class="fa fa-inr"></i> 3,349</div>
-                            <div class="bndl-prod-price-mrps"><i class="fa fa-inr"></i> <span>3,800</span> Save 28%
+                            <div class="bndl-prod-price-sale"><i class="fa fa-inr"></i> {{number_format($rows->mrps)}}</div>
+                            <div class="bndl-prod-price-mrps"><i class="fa fa-inr"></i> <span>{{number_format($rows->sale_price)}}</span> Save 28%
                             </div>
                         </div>
 
@@ -232,165 +280,11 @@
                             <span class="nb-rw">856</span>
                         </div>
 
-                        <h3 class="prod-nm"><span class="brand">BRK</span> Electric Lawn Mower 12 Inches With 1200
-                            Watt</h3>
+                        <h3 class="prod-nm"><span class="brand">{{$rows->barnd_name}}</span> {{$rows->product_name}}</h3>
                     </a>
-                    <a href="#" class="btn btn-atcr">ADD TO CART</a>
+                    <a href="{{url('add-to-cart,$rows->id')}}" class="btn btn-atcr">ADD TO CART</a>
                 </div>
-
-                <div class="prd-cntr">
-                    <a href="#">
-                        <div class="pro-im">
-                            <img src="images/product-hm2.jpg" class="">
-                        </div>
-                        <div class="prod-card-price">
-                            <div class="bndl-prod-price-sale"><i class="fa fa-inr"></i> 3,349</div>
-                            <div class="bndl-prod-price-mrps"><i class="fa fa-inr"></i> <span>3,800</span> Save 28%
-                            </div>
-                        </div>
-
-                        <div class="prod-card-rating">
-                            <div class="Stars" style="--rating: 4.2;" aria-label=""></div>
-                            <span class="nb-rw">856</span>
-                        </div>
-
-                        <h3 class="prod-nm"><span class="brand">BRK</span> Electric Lawn Mower 12 Inches With 1200
-                            Watt</h3>
-                    </a>
-                    <a href="#" class="btn btn-atcr">ADD TO CART</a>
-                </div>
-
-                <div class="prd-cntr">
-                    <a href="#">
-                        <div class="pro-im">
-                            <img src="images/product-hm3.jpg" class="">
-                        </div>
-                        <div class="prod-card-price">
-                            <div class="bndl-prod-price-sale"><i class="fa fa-inr"></i> 3,349</div>
-                            <div class="bndl-prod-price-mrps"><i class="fa fa-inr"></i> <span>3,800</span> Save 28%
-                            </div>
-                        </div>
-
-                        <div class="prod-card-rating">
-                            <div class="Stars" style="--rating: 4.2;" aria-label=""></div>
-                            <span class="nb-rw">856</span>
-                        </div>
-
-                        <h3 class="prod-nm"><span class="brand">BRK</span> Electric Lawn Mower 12 Inches With 1200
-                            Watt</h3>
-                    </a>
-                    <a href="#" class="btn btn-atcr">ADD TO CART</a>
-                </div>
-
-                <div class="prd-cntr">
-                    <a href="#">
-                        <div class="pro-im">
-                            <img src="images/product-hm4.jpg" class="">
-                        </div>
-                        <div class="prod-card-price">
-                            <div class="bndl-prod-price-sale"><i class="fa fa-inr"></i> 3,349</div>
-                            <div class="bndl-prod-price-mrps"><i class="fa fa-inr"></i> <span>3,800</span> Save 28%
-                            </div>
-                        </div>
-                        <div class="prod-card-rating">
-                            <div class="Stars" style="--rating: 0;" aria-label=""></div>
-                            <span class="nb-rw"></span>
-                        </div>
-
-                        <h3 class="prod-nm"><span class="brand">BRK</span> Electric Lawn Mower 12 Inches With 1200
-                            Watt</h3>
-                    </a>
-                    <a href="#" class="btn btn-atcr">ADD TO CART</a>
-                </div>
-
-                <div class="prd-cntr">
-                    <a href="#">
-                        <div class="pro-im">
-                            <img src="images/product-hm5.jpg" class="">
-                        </div>
-                        <div class="prod-card-price">
-                            <div class="bndl-prod-price-sale"><i class="fa fa-inr"></i> 3,349</div>
-                            <div class="bndl-prod-price-mrps"><i class="fa fa-inr"></i> <span>3,800</span> Save 28%
-                            </div>
-                        </div>
-
-                        <div class="prod-card-rating">
-                            <div class="Stars" style="--rating: 4.2;" aria-label=""></div>
-                            <span class="nb-rw">856</span>
-                        </div>
-
-                        <h3 class="prod-nm"><span class="brand">BRK</span> Electric Lawn Mower 12 Inches With 1200
-                            Watt</h3>
-                    </a>
-                    <a href="#" class="btn btn-atcr">ADD TO CART</a>
-                </div>
-
-
-                <div class="prd-cntr">
-                    <a href="#">
-                        <div class="pro-im">
-                            <img src="images/product-hm6.jpg" class="">
-                        </div>
-                        <div class="prod-card-price">
-                            <div class="bndl-prod-price-sale"><i class="fa fa-inr"></i> 3,349</div>
-                            <div class="bndl-prod-price-mrps"><i class="fa fa-inr"></i> <span>3,800</span> Save 28%
-                            </div>
-                        </div>
-
-                        <div class="prod-card-rating">
-                            <div class="Stars" style="--rating: 4.2;" aria-label=""></div>
-                            <span class="nb-rw">856</span>
-                        </div>
-
-                        <h3 class="prod-nm"><span class="brand">BRK</span> Electric Lawn Mower 12 Inches With 1200
-                            Watt</h3>
-                    </a>
-                    <a href="#" class="btn btn-atcr">ADD TO CART</a>
-                </div>
-
-
-                <div class="prd-cntr">
-                    <a href="#">
-                        <div class="pro-im">
-                            <img src="images/product-hm7.jpg" class="">
-                        </div>
-                        <div class="prod-card-price">
-                            <div class="bndl-prod-price-sale"><i class="fa fa-inr"></i> 3,349</div>
-                            <div class="bndl-prod-price-mrps"><i class="fa fa-inr"></i> <span>3,800</span> Save 28%
-                            </div>
-                        </div>
-
-                        <div class="prod-card-rating">
-                            <div class="Stars" style="--rating: 4.2;" aria-label=""></div>
-                            <span class="nb-rw">856</span>
-                        </div>
-
-                        <h3 class="prod-nm"><span class="brand">BRK</span> Electric Lawn Mower 12 Inches With 1200
-                            Watt</h3>
-                    </a>
-                    <a href="#" class="btn btn-atcr">ADD TO CART</a>
-                </div>
-
-                <div class="prd-cntr">
-                    <a href="#">
-                        <div class="pro-im">
-                            <img src="images/product-hm8.jpg" class="">
-                        </div>
-                        <div class="prod-card-price">
-                            <div class="bndl-prod-price-sale"><i class="fa fa-inr"></i> 3,349</div>
-                            <div class="bndl-prod-price-mrps"><i class="fa fa-inr"></i> <span>3,800</span> Save 28%
-                            </div>
-                        </div>
-
-                        <div class="prod-card-rating">
-                            <div class="Stars" style="--rating: 4.2;" aria-label=""></div>
-                            <span class="nb-rw">856</span>
-                        </div>
-                        <h3 class="prod-nm"><span class="brand">BRK</span> Electric Lawn Mower 12 Inches With 1200
-                            Watt</h3>
-                    </a>
-                    <a href="#" class="btn btn-atcr">ADD TO CART</a>
-                </div>
+                @endforeach @endif
             </div>
         </div>
     </div>
@@ -439,6 +333,43 @@
             });
         }
     });
+</script>
+<button id="rzp-button1" hidden>Pay</button> 
+<script src = "https://checkout.razorpay.com/v1/checkout.js" ></script> <script>
+    var options = {
+        "key": "{{env('RAZORPAY_KEY')}}",
+        "amount": "{{$discounted}}",
+        "currency": "INR",
+        "name": "{{config('app.name')}}",
+        "description": "Rozerpay",
+        "image": "{{asset('web/images/logo.png')}}",
+        "order_id": "{{$initiate['orderId']}}",
+        "handler": function(response) {
+            document.getElementById('rzp_paymentid').value = response.razorpay_payment_id;
+            document.getElementById('rzp_orderid').value = response.razorpay_order_id;
+            document.getElementById('rzp_signature').value = response.razorpay_signature;
+            document.getElementById('rzp-paymentresponse').click();
+        },
+        "prefill": {
+            "name": "@if(!empty(Auth::user())){{Auth::user()->name}}@endif",
+            "email": "@if(!empty(Auth::user())){{Auth::user()->email}}@endif",
+            "contact": "@if(!empty(Auth::user())){{Auth::user()->mobile}}@endif"
+        },
+        "notes": {
+            "address": "@if(!empty(Auth::user())){{Auth::user()->address}}@endif"
+        },
+        "theme": {
+            "color": "#F37254"
+        }
+    };
+var rzp1 = new Razorpay(options);
+window.onload = function() {
+    // document.getElementById('rzp-button1').click();
+};
+document.getElementById('rzp-button1').onclick = function(e) {
+    rzp1.open();
+    e.preventDefault();
+} 
 </script>
 @endpush
 @endsection('content')

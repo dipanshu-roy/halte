@@ -30,7 +30,9 @@ Route::middleware(['auth','user-access:admin'])->group(function () {
     Route::any('admin/add-staff', [SuperadminController::class, 'AddStaff'])->name('add.staff');
     Route::get('admin/update-staff/{id}', [SuperadminController::class, 'UpdateStaff']);
     Route::get('admin/delete-staff/{id}', [SuperadminController::class, 'DeleteStaff']);
-
+    /* Product View */
+    Route::get('admin/users-customers', [SuperadminController::class, 'UsersCustomers']);
+    Route::get('admin/reviews', [SuperadminController::class, 'Reviews']);
     /*  Brnd Item */
     Route::get('admin/product/add-brand', [App\Http\Controllers\Superadmin\ProductController::class, 'AddBrand']);
     Route::post('admin/product/save-brand', [App\Http\Controllers\Superadmin\ProductController::class, 'SaveBrand']);
@@ -52,7 +54,8 @@ Route::middleware(['auth','user-access:admin'])->group(function () {
     Route::get('admin/product/update-product/{id}', [App\Http\Controllers\Superadmin\ProductController::class, 'UpdateProduct']);
     Route::get('admin/product/delete-product/{id}', [App\Http\Controllers\Superadmin\ProductController::class, 'DeleteProduct']);
     /* Product View */
-    Route::get('admin/product/view-product', [App\Http\Controllers\Superadmin\ProductController::class, 'ViewProduct']);
+    Route::any('admin/product/view-product', [App\Http\Controllers\Superadmin\ProductController::class, 'ViewProduct']);
+    
     /*  Manage Pages */                                
     Route::any('admin/about-us', [SuperadminController::class, 'AboutUs']);
     Route::any('admin/support', [SuperadminController::class, 'Support']);
@@ -64,15 +67,24 @@ Route::middleware(['auth','user-access:admin'])->group(function () {
     Route::any('admin/offers', [SuperadminController::class, 'Offers']);
     Route::any('admin/update-offer/{id}', [SuperadminController::class, 'UpdateOffer']);
     Route::any('admin/delete-offer/{id}', [SuperadminController::class, 'DeleteOffer']);
+    Route::any('admin/delete-reviews/{id}', [SuperadminController::class, 'DeleteReviews']);
+    Route::any('admin/reviews-approve/{id}', [SuperadminController::class, 'ReviewsApprove']);
+    Route::any('admin/reviews-unapprove/{id}', [SuperadminController::class, 'ReviewsUnapprove']);
     Route::any('admin/blog', [SuperadminController::class, 'Blogs']);
     Route::any('admin/update-blog/{id}', [SuperadminController::class, 'UpdateBlog']);
     Route::any('admin/delete-blog/{id}', [SuperadminController::class, 'DeleteBlog']);
     Route::any('admin/contact-query', [SuperadminController::class, 'ContactQuery']);
     Route::any('admin/dealer-query', [SuperadminController::class, 'DealerQuery']);
     Route::any('admin/faq', [SuperadminController::class, 'FAQ']);
+    Route::any('admin/update-faq/{id}', [SuperadminController::class, 'UpdateFaq']);
     Route::any('admin/news-media', [SuperadminController::class, 'NewsMedia']);
     Route::any('admin/home-page', [SuperadminController::class, 'HomePage']);
+    Route::any('admin/our-brand-delete/{id}', [SuperadminController::class, 'HomeBrand']);
 
+    Route::any('admin/add-better-together-product', [SuperadminController::class, 'BetterTogetherProduct']);
+    Route::get('admin/tickets', [SuperadminController::class, 'Tickets']);
+    Route::get('admin/view-order', [SuperadminController::class, 'ViewOrder']);
+    Route::get('admin/order-reports', [SuperadminController::class, 'OrderReports']);
 
 });
 
@@ -122,10 +134,11 @@ Route::middleware(['auth', 'user-access:staff'])->group(function () {
 Route::middleware(['auth', 'user-access:user'])->group(function () {
     
 });
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/dashboard', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::get('/', [App\Http\Controllers\WebController::class, 'index']);
 Route::get('/brand/{slug}', [App\Http\Controllers\WebController::class, 'Product']);
 Route::get('/ct/{cat}/{subcat}', [App\Http\Controllers\WebController::class, 'SubProduct']);
+Route::get('/pr/{subcat}/{product}', [App\Http\Controllers\WebController::class, 'VewProduct']);
 
 
 Route::get('/contact-us', [App\Http\Controllers\WebController::class, 'ContactUs']);
@@ -138,17 +151,29 @@ Route::get('/offers', [App\Http\Controllers\WebController::class, 'WebPages']);
 Route::get('/news-and-media', [App\Http\Controllers\WebController::class, 'NewsAndMedia']);
 Route::get('/blogs', [App\Http\Controllers\WebController::class, 'Blogs']);
 Route::get('/blogs/{id}', [App\Http\Controllers\WebController::class, 'BlogsRead']);
-Route::get('/support', [App\Http\Controllers\WebController::class, 'Support']);
+Route::get('/support', [App\Http\Controllers\WebController::class, 'WebPages']);
+Route::get('/news-and-media', [App\Http\Controllers\WebController::class, 'NewsMedia']);
 
 
 Route::get('cart', [App\Http\Controllers\WebController::class, 'cart'])->name('cart');
+Route::get('checkout', [App\Http\Controllers\WebController::class, 'Checkout'])->name('checkout');
+Route::post('proceed-to-pay', [App\Http\Controllers\WebController::class, 'ProceedToPay']);
 Route::get('add-to-cart/{id}', [App\Http\Controllers\WebController::class, 'addToCart']);
 Route::patch('update-cart', [App\Http\Controllers\WebController::class, 'update'])->name('update.cart');
 Route::delete('remove-from-cart', [App\Http\Controllers\WebController::class, 'remove'])->name('remove.from.cart');
+Route::post('apply-coupon', [App\Http\Controllers\WebController::class, 'ApplyCoupon']);
+Route::post('remove-coupon', [App\Http\Controllers\WebController::class, 'RemoveCoupon']);
 
+Route::get('razorpay-payment', [RazorpayPaymentController::class, 'index']);
+Route::post('razorpay-payment', [RazorpayPaymentController::class, 'store'])->name('razorpay.payment.store');
+Route::post('/payment-complete',[RazorpayPaymentController::class, 'Complete']);
 
 Route::get('/account/login', [App\Http\Controllers\WebController::class, 'AccountLogin']);
 Route::post('/send-enquiry', [App\Http\Controllers\WebController::class, 'SendEnquiry']);
+Route::post('/want-to-become-dealer', [App\Http\Controllers\WebController::class, 'WantToBecomeDealer']);
+Route::post('add-reviews', [App\Http\Controllers\WebController::class,'AddReviews']);
+
+Route::get('redirect/{driver}', [App\Http\Controllers\Auth\LoginController::class,'redirectToProvider']);
+Route::get('{driver}/callback', [App\Http\Controllers\Auth\LoginController::class,'handleProviderCallback']);
 
 
-// SELECT a.id,a.product_name,b.category_name,c.subcategory_name,d.barnd_name,a.product_slug,a.main_image,a.sub_images,a.video,a.mrps,a.sale_price,a.amazon_link,a.about_this_item,a.rating,a.synonyms_other_name,a.page_title,a.page_description,a.page_keywords FROM `products` as a INNER JOIN product_categories as b on a.category_id=b.id INNER JOIN product_sub_categories as c on a.subcategory_id=c.id INNER JOIN brands as d on a.brand_id=d.id;

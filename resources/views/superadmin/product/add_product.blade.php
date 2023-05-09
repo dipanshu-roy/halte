@@ -26,7 +26,7 @@
                                 <label class="col-sm-2 col-form-label">Main Category</label>
                                 <div class="col-sm-10">
                                     <div class="form-group bmd-form-group textarea">
-                                    <select name="category_id" class="form-control" onchange="get_subcategory(this.value)">
+                                    <select name="category_id" class="form-control" onchange="get_subcategory(this.value)" required>
                                         <option value="">Select </option>
                                         @if(!empty($category)) 
                                             @foreach($category as $cat)
@@ -41,7 +41,7 @@
                                 <label class="col-sm-2 col-form-label">Sub Category</label>
                                 <div class="col-sm-10">
                                     <div class="form-group bmd-form-group textarea">
-                                    <select name="subcategory_id" id="subcategory_id" class="form-control">
+                                    <select name="subcategory_id" id="subcategory_id" class="form-control" required>
                                         <option value="">Select </option>
                                         @if(!empty($subcategory)) 
                                             @foreach($subcategory as $subcat)
@@ -56,7 +56,7 @@
                                 <label class="col-sm-2 col-form-label">Brand</label>
                                 <div class="col-sm-10">
                                     <div class="form-group bmd-form-group textarea">
-                                    <select name="brand_id" class="form-control">
+                                    <select name="brand_id" class="form-control" required>
                                         <option value="">Select </option>
                                         @if(!empty($brand)) 
                                             @foreach($brand as $bra)
@@ -89,7 +89,17 @@
                                         <p class="small">Size (w x h) 750px x 750px</p>
                                         <div class="row">
                                             <div class="col-sm-12">
-                                                <a href="#" class="img-remove-thumb-1"> @if(!empty($update->main_image))<i class="fa fa-times" onclick="romeve_image_1()"></i><img id="blah_1" src="{{asset($update->main_image)}}" alt="" width="100" class="img-thumbnail"> @endif</a>
+                                                <a href="#" class="img-remove-thumb-1">
+                                                    @php 
+                                                    if(!empty($update->sub_images)){
+                                                        $image = explode(',',$update->sub_images);
+                                                        $img_count = count($image);
+                                                        for($i=0;$i<$img_count;$i++){ @endphp
+                                                            <i class="fa fa-times" onclick="romeve_image_1()"></i><img id="blah_1" src="{{asset($image[$i])}}" alt="" width="100" class="img-thumbnail">
+                                                        @php }
+                                                    }
+                                                    @endphp
+                                                </a>
                                             </div>
                                         </div>
                                     </div>
@@ -108,7 +118,7 @@
                                 <label class="col-sm-2 col-form-label">M.R.P.S</label>
                                 <div class="col-sm-10">
                                     <div class="form-group bmd-form-group textarea">
-                                    <input name="mrps" id="mrps" class="form-control" maxlength="11" type="text" value="@if(!empty($update->mrps)){{$update->mrps}}@else{{old('mrps')}}@endif" oninput="this.value = this.value.replace(/[^0-9.]/g, ''); this.value = this.value.replace(/(\..*)\./g, '$1');">
+                                    <input name="mrps" id="mrps" class="form-control" maxlength="11" type="text" value="@if(!empty($update->mrps)){{$update->mrps}}@else{{old('mrps')}}@endif" oninput="this.value = this.value.replace(/[^0-9.]/g, ''); this.value = this.value.replace(/(\..*)\./g, '$1');" required>
                                     </div>
                                 </div>
                             </div>
@@ -116,7 +126,7 @@
                                 <label class="col-sm-2 col-form-label">Sale Price</label>
                                 <div class="col-sm-10">
                                     <div class="form-group bmd-form-group textarea">
-                                    <input name="sale_price" id="sale_price" class="form-control" maxlength="11" type="text" value="@if(!empty($update->sale_price)){{$update->sale_price}}@else{{old('sale_price')}}@endif" oninput="this.value = this.value.replace(/[^0-9.]/g, ''); this.value = this.value.replace(/(\..*)\./g, '$1');">
+                                    <input name="sale_price" id="sale_price" class="form-control" maxlength="11" type="text" value="@if(!empty($update->sale_price)){{$update->sale_price}}@else{{old('sale_price')}}@endif" oninput="this.value = this.value.replace(/[^0-9.]/g, ''); this.value = this.value.replace(/(\..*)\./g, '$1');" required>
                                     </div>
                                 </div>
                             </div>
@@ -191,7 +201,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-sm-12">
-                                    <div class="card-body ">
+                                    <div class="card-body">
                                         <h4>Add Other Details</h4>
                                         <hr>
                                         <ul class="nav nav-pills nav-pills-warning" role="tablist">
@@ -205,11 +215,11 @@
                                                     Specification
                                                 </a>
                                             </li>
-                                            <li class="nav-item">
+                                            <!-- <li class="nav-item">
                                                 <a class="nav-link" data-toggle="tab" href="#link3" role="tablist">
                                                     Videos
                                                 </a>
-                                            </li>
+                                            </li> -->
                                         </ul>
                                         <div class="tab-content tab-space">
                                             <div class="tab-pane active show" id="link1">
@@ -220,6 +230,7 @@
                                                         <div class="form-group bmd-form-group textarea">
                                                             <input name="feature_main_image" id="feature_main_image" class="form-control" type="file">
                                                             <p class="small">Size (w x h) 600px x 600px</p>
+                                                            @if(!empty($update_feature->feature_main_image))<img id="blah" src="{{asset($update_feature->feature_main_image)}}" alt="" width="100" class="img-thumbnail"> @endif
                                                         </div>
                                                     </div>
                                                 </div>
@@ -227,12 +238,42 @@
                                                     <label class="col-sm-2 col-form-label">Description</label>
                                                     <div class="col-sm-10">
                                                         <div class="form-group bmd-form-group textarea">
-                                                            <textarea name="description" id="description" class="form-control" type="text" rows="3">@if(!empty($update->description)){{$update->description}}@endif</textarea>
+                                                            <textarea name="description" id="description" class="form-control" type="text" rows="3">@if(!empty($update_feature->description)){{$update_feature->description}}@endif</textarea>
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-md-12">
+                                                        @if(!empty($update_feature_details)) @foreach($update_feature_details as $feature_details)
+                                                            <div class="row">
+                                                                <label class="col-sm-2 col-form-label">Feature Title</label>
+                                                                <div class="col-sm-10">
+                                                                    <div class="form-group bmd-form-group textarea">
+                                                                        <input name="feature_title[]" id="feature_title" class="form-control" type="text" value="{{$feature_details->feature_title}}">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <label class="col-sm-2 col-form-label">Feature Image</label>
+                                                                <div class="col-sm-10">
+                                                                    <div class="form-group bmd-form-group textarea">
+                                                                        <input name="feature_image[]" id="feature_image" class="form-control" type="file" value="">
+                                                                        <img id="blah" src="{{asset($feature_details->feature_image)}}" alt="" width="100" class="img-thumbnail">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <label class="col-sm-2 col-form-label">Feature Details</label>
+                                                                <div class="col-sm-10">
+                                                                    <div class="form-group bmd-form-group textarea">
+                                                                        <textarea name="feature_details[]" id="feature_details" class="form-control" type="text" rows="3">{{$feature_details->feature_details}}</textarea>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        @endforeach 
+                                                        <div id="tab_logic" class="after-add-more axyz">
+                                                        </div>
+                                                        @else
                                                         <div id="tab_logic" class="after-add-more">
                                                             <div class="row">
                                                                 <label class="col-sm-2 col-form-label">Feature Title</label>
@@ -259,6 +300,7 @@
                                                                 </div>
                                                             </div>
                                                         </div>
+                                                        @endif
                                                     </div>
                                                 </div>
                                                 <div class="row">
@@ -280,7 +322,7 @@
                                                                 <label class="col-sm-4 col-form-label">SKU</label>
                                                                 <div class="col-sm-7">
                                                                     <div class="form-group bmd-form-group textarea">
-                                                                        <input name="sku" id="" class="form-control" type="text" value="">
+                                                                        <input name="sku" id="" class="form-control" type="text" value="@if(!empty($update_specification->sku)){{$update_specification->sku}}@endif">
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -290,7 +332,7 @@
                                                                 <label class="col-sm-5 col-form-label">Power Source </label>
                                                                 <div class="col-sm-7">
                                                                     <div class="form-group bmd-form-group textarea">
-                                                                        <input name="power_source" id="" class="form-control" type="text" value="">
+                                                                        <input name="power_source" id="" class="form-control" type="text" value="@if(!empty($update_specification->power_source)){{$update_specification->power_source}}@endif">
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -302,7 +344,7 @@
                                                                 <label class="col-sm-4 col-form-label">Material</label>
                                                                 <div class="col-sm-7">
                                                                     <div class="form-group bmd-form-group textarea">
-                                                                        <input name="material" id="" class="form-control" type="text" value="">
+                                                                        <input name="material" id="" class="form-control" type="text" value="@if(!empty($update_specification->material)){{$update_specification->material}}@endif">
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -312,7 +354,7 @@
                                                                 <label class="col-sm-5 col-form-label">Colour</label>
                                                                 <div class="col-sm-7">
                                                                     <div class="form-group bmd-form-group textarea">
-                                                                        <input name="colour" id="" class="form-control" type="text" value="">
+                                                                        <input name="colour" id="" class="form-control" type="text" value="@if(!empty($update_specification->colour)){{$update_specification->colour}}@endif">
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -324,7 +366,7 @@
                                                                 <label class="col-sm-4 col-form-label">Style</label>
                                                                 <div class="col-sm-7">
                                                                     <div class="form-group bmd-form-group textarea">
-                                                                        <input name="style" id="" class="form-control" type="text" value="">
+                                                                        <input name="style" id="" class="form-control" type="text" value="@if(!empty($update_specification->style)){{$update_specification->style}}@endif">
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -334,7 +376,7 @@
                                                                 <label class="col-sm-5 col-form-label">Item Weight </label>
                                                                 <div class="col-sm-7">
                                                                     <div class="form-group bmd-form-group textarea">
-                                                                        <input name="item_weight" id="" class="form-control" type="text" value="">
+                                                                        <input name="item_weight" id="" class="form-control" type="text" value="@if(!empty($update_specification->item_weight)){{$update_specification->item_weight}}@endif">
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -346,7 +388,7 @@
                                                                 <label class="col-sm-4 col-form-label">Cutting Width </label>
                                                                 <div class="col-sm-7">
                                                                     <div class="form-group bmd-form-group textarea">
-                                                                        <input name="cutting_width" id="" class="form-control" type="text" value="">
+                                                                        <input name="cutting_width" id="" class="form-control" type="text" value="@if(!empty($update_specification->cutting_width)){{$update_specification->cutting_width}}@endif">
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -356,7 +398,7 @@
                                                                 <label class="col-sm-5 col-form-label">Number of Positions </label>
                                                                 <div class="col-sm-7">
                                                                     <div class="form-group bmd-form-group textarea">
-                                                                        <input name="number_of_positions" id="" class="form-control" type="text" value="">
+                                                                        <input name="number_of_positions" id="" class="form-control" type="text" value="@if(!empty($update_specification->number_of_positions)){{$update_specification->number_of_positions}}@endif">
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -368,7 +410,7 @@
                                                                 <label class="col-sm-4 col-form-label">Country of Origin </label>
                                                                 <div class="col-sm-7">
                                                                     <div class="form-group bmd-form-group textarea">
-                                                                        <input name="country_of_origin" id="" class="form-control" type="text" value="">
+                                                                        <input name="country_of_origin" id="" class="form-control" type="text" value="@if(!empty($update_specification->country_of_origin)){{$update_specification->country_of_origin}}@endif">
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -378,7 +420,7 @@
                                                                 <label class="col-sm-5 col-form-label">Product Dimensions </label>
                                                                 <div class="col-sm-7">
                                                                     <div class="form-group bmd-form-group textarea">
-                                                                        <input name="product_dimensions" id="" class="form-control" type="text" value="">
+                                                                        <input name="product_dimensions" id="" class="form-control" type="text" value="@if(!empty($update_specification->product_dimensions)){{$update_specification->product_dimensions}}@endif">
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -391,7 +433,7 @@
                                                                 <label class="col-sm-4 col-form-label">Specification Title </label>
                                                                 <div class="col-sm-7">
                                                                     <div class="form-group bmd-form-group textarea">
-                                                                        <input name="specification_title" id="" class="form-control" type="text" value="">
+                                                                        <input name="specification_title" id="" class="form-control" type="text" value="@if(!empty($update_specification->specification_title)){{$update_specification->specification_title}}@endif">
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -401,7 +443,7 @@
                                                                 <label class="col-sm-5 col-form-label">Specification Value </label>
                                                                 <div class="col-sm-7">
                                                                     <div class="form-group bmd-form-group textarea">
-                                                                        <input name="specification_value" id="" class="form-control" type="text" value="">
+                                                                        <input name="specification_value" id="" class="form-control" type="text" value="@if(!empty($update_specification->specification_value)){{$update_specification->specification_value}}@endif">
 
                                                                     </div>
                                                                 </div>
@@ -410,24 +452,16 @@
                                                         </div>
                                                     </div>
                                                     <div class="row">
-                                                        <label class="col-sm-2 col-form-label"></label>
-                                                        <div class="col-sm-10">
-                                                            <div class="form-group bmd-form-group textarea">
-                                                                <a class="btn btn-sm btn-link2">+ Add New Specification</a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
                                                         <label class="col-sm-2 col-form-label">Additional Information</label>
                                                         <div class="col-sm-10">
                                                             <div class="form-group bmd-form-group textarea">
-                                                                <textarea name="additional_information" id="" class="form-control" type="text" rows="3"></textarea>
+                                                                <textarea name="additional_information" id="" class="form-control" type="text" rows="3">@if(!empty($update_specification->additional_information)){{$update_specification->additional_information}}@endif</textarea>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="tab-pane" id="link3">
+                                            <!-- <div class="tab-pane" id="link3">
                                                 <p><br></p>
                                                 <div class="form-horizontal">
                                                     <div class="row">
@@ -448,7 +482,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </div> -->
                                         </div>
                                     </div>
                                 </div>
@@ -530,6 +564,32 @@
     $(document).ready(function() {
         $(".add-more").click(function(){ 
             var html = $("#tab_logic").html();
+            if($('.after-add-more').hasClass("axyz")){
+                html = `<div class="row">
+                        <label class="col-sm-2 col-form-label">Feature Title</label>
+                        <div class="col-sm-10">
+                            <div class="form-group bmd-form-group textarea">
+                                <input name="feature_title[]" id="feature_title" class="form-control" type="text" value="">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="col-sm-2 col-form-label">Feature Image</label>
+                        <div class="col-sm-10">
+                            <div class="form-group bmd-form-group textarea">
+                                <input name="feature_image[]" id="feature_image" class="form-control" type="file" value="">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="col-sm-2 col-form-label">Feature Details</label>
+                        <div class="col-sm-10">
+                            <div class="form-group bmd-form-group textarea">
+                                <textarea name="feature_details[]" id="feature_details" class="form-control" type="text" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </div>`;
+            }
             $(".after-add-more").after(html);
             $(".change").append("<label for=''>&nbsp;</label><br/><a class='btn btn-danger remove'>- Remove</a>");
         });

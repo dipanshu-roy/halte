@@ -18,8 +18,6 @@
                                     <h3>Search</h3>
                                 </div>
                             </div>
-
-
                             <div class="row">
                                 <div class="col-sm-6">
                                     <div class="row">
@@ -34,7 +32,6 @@
                                         </div>
                                     </div>
                                 </div>
-
                                 <div class="col-sm-6">
                                     <div class="row">
                                         <label class="col-sm-4 col-form-label">To</label>
@@ -47,10 +44,8 @@
                                             </div>
                                         </div>
                                     </div>
-
                                 </div>
                             </div>
-
                             <div class="row">
                                 <label class="col-sm-2 col-form-label"></label>
                                 <div class="col-sm-10">
@@ -63,8 +58,6 @@
                     </div>
                 </div>
             </div>
-
-
             <div class="col-md-12">
                 <div class="card ">
                     <div class="card-header card-header-primary card-header-text">
@@ -72,7 +65,6 @@
                     <div class="card-body">
                         <p><br></p>
                         <div class="col-md-12">
-
                             <div class="table-responsive">
                                 <table id="example" class="display" style="width:100%">
                                     <thead class="text-primary">
@@ -84,13 +76,11 @@
                                             <th>City</th>
                                             <th>Message</th>
                                         </tr>
-
                                     </thead>
-
                                     <tbody>
                                         @if(!empty($dealerQuery))
                                         @foreach($dealerQuery as $row)
-                                        <tr class="tac">
+                                        <tr>
                                             <td>{{$loop->iteration}}</td>
                                             <td>{{$row->name}}</td>
                                             <td>{{$row->phone}}</td>
@@ -112,5 +102,4 @@
         </div>
     </div>
 </div>
-
 @endsection('content')

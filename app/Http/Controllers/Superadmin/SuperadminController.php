@@ -7,7 +7,15 @@ use App\Models\User;
 use App\Models\PageContent;
 use App\Models\ContactQuery;
 use App\Models\DealerQuery;
+use App\Models\ProductCategory;
+use App\Models\ServiceSpare;
+use App\Models\OurBrand;
+use App\Models\VisionInnovation;
+use App\Models\ProductSubCategory;
+use App\Models\Home;
+use App\Models\SuggestionProduct;
 use App\Models\Faq;
+use App\Models\Review;
 use App\Models\FaqCategory;
 use App\Models\NewsMedia;
 use App\Models\Blog;
@@ -55,6 +63,26 @@ class SuperadminController extends Controller
         }
         return view('superadmin/add_staff',compact('result'));
     }
+    public function UsersCustomers(Request $request){
+        $result = User::where('type',2)->orderBy('id','DESC')->get();
+        return view('superadmin/users_customers',compact('result'));
+    }
+    public function Reviews(){
+        $result = DB::select("SELECT a.id,c.name,c.email,c.mobile,b.product_name,b.main_image,a.rating,a.title,a.description,a.status,a.created_at FROM `reviews` as a INNER JOIN products as b on a.product_id=b.id INNER JOIN users as c on a.user_id=c.id ORDER BY a.id DESC");
+        return view('superadmin/reviews',compact('result'));
+    }
+    public function ReviewsApprove($id){
+        $review = Review::where('id',$id)->first();
+        $review->status = 1;
+        $review->save();
+        return redirect('admin/reviews')->with('success','Approved successfully');
+    }
+    public function ReviewsUnapprove($id){
+        $review = Review::where('id',$id)->first();
+        $review->status = '0';
+        $review->save();
+        return redirect('admin/reviews')->with('success','Unapproved successfully');
+    }
     public function UpdateStaff(Request $request,$id){
         $update = User::where('id',$id)->orderBy('id','DESC')->first();
         $result = User::where('type','!=',2)->orderBy('id','DESC')->get();
@@ -63,6 +91,10 @@ class SuperadminController extends Controller
     public function DeleteStaff(Request $request,$id){
         User::where('id',$id)->delete();
         return redirect('admin/add-staff')->with('error','Deleted successfully');
+    }
+    public function DeleteReviews($id){
+        Review::where('id',$id)->delete();
+        return redirect('admin/reviews')->with('error','Deleted successfully');
     }
 
     public function AboutUs(Request $request){
@@ -369,15 +401,15 @@ class SuperadminController extends Controller
         if(!empty($request->start_date) && !empty($request->end_date)){
             $startDate = date_format(date_create($request->start_date),'Y-m-d');
             $endDate = date_format(date_create($request->end_date),'Y-m-d');
-            $dealerQuery = DealerQuery::whereBetween('created_at', [$startDate, $endDate])->orderBy('id','DESC')->get();
+            $dealerQuery = DealerQuery::where('url','become-dealer')->whereBetween('created_at', [$startDate, $endDate])->orderBy('id','DESC')->get();
         }else{
-            $dealerQuery = DealerQuery::skip(0)->take(10)->orderBy('id','DESC')->get();
+            $dealerQuery = DealerQuery::where('url','become-dealer')->skip(0)->take(10)->orderBy('id','DESC')->get();
         }
         return view('superadmin/dealer_query',compact('dealerQuery'));
     }
     public function FAQ(Request $request){
-        $faqcategory = FaqCategory::select('id','category_name')->orderBy('id','DESC')->get();
-        $resultFaq = DB::select("SELECT b.category_name,a.id,a.title,a.text,a.category_id FROM `faqs` AS a INNER JOIN faq_categories AS b ON a.category_id=b.id ORDER BY a.id DESC");
+        $faqcategory = ProductCategory::select('id','category_name')->orderBy('id','DESC')->get();
+        $resultFaq = DB::select("SELECT b.category_name,a.id,a.title,a.text,a.category_id FROM `faqs` AS a INNER JOIN product_categories AS b ON a.category_id=b.id ORDER BY a.id DESC");
         if(!empty($request->id)){
             $faq = Faq::where('id',$request->id)->first();
             $faq->category_id = $request->category_id;
@@ -398,7 +430,7 @@ class SuperadminController extends Controller
     }
     public function UpdateFaq(Request $request,$id){
         $updateFaq = Faq::where('id',$id)->orderBy('id','DESC')->first();
-        $faqcategory = FaqCategory::select('id','category_name')->orderBy('id','DESC')->get();
+        $faqcategory = ProductCategory::select('id','category_name')->orderBy('id','DESC')->get();
         return view('superadmin/faq',compact('updateFaq','faqcategory'));
     }
     public function DeleteFaq(Request $request,$id){
@@ -406,7 +438,7 @@ class SuperadminController extends Controller
         return redirect('admin/faq')->with('success','Deleted successfully');
     }
     public function NewsMedia(Request $request){
-        $resultNewsMe = NewsMedia::orderBy('id','DESC')->get();
+        $resultNewsMe = NewsMedia::where('id',1)->first();
         if(!empty($request->text)){
             $newsMedia = new NewsMedia();
             $newsMedia->text = $request->text;
@@ -449,6 +481,254 @@ class SuperadminController extends Controller
         return view('superadmin/news_media',compact('resultNewsMe'));
     }
     public function HomePage(Request $request){
-        return view('superadmin/home_page');
+        $update = Home::where('id',1)->first();
+        $our_brand = OurBrand::get();
+        $our_brand_count = OurBrand::count();
+        $vision_innovation = VisionInnovation::get();
+        $service_spare = ServiceSpare::get();
+        $subcategory = ProductSubCategory::get();
+        $suggestion_product = SuggestionProduct::get();
+        $suggestion_product_count = SuggestionProduct::count();
+        $up = $update;
+        if(!empty($request->all())){
+            if(!empty($up)){
+                if($request->file('logo')){
+                    $extension = $request->logo->getClientOriginalExtension();
+                    $fileNameToStore = time().'.'.$extension;
+                    $assetUrl = $request->logo->move('public/logo/',$fileNameToStore);
+                    $up->logo = 'logo/'.$fileNameToStore;
+                }
+                if($request->file('future_image')){
+                    $extension = $request->future_image->getClientOriginalExtension();
+                    $fileNameToStore = time().'.'.$extension;
+                    $assetUrl = $request->future_image->move('public/future_image/',$fileNameToStore);
+                    $up->future_image = 'future_image/'.$fileNameToStore;
+                }
+                if($request->file('heritage_image')){
+                    $extension = $request->heritage_image->getClientOriginalExtension();
+                    $fileNameToStore = time().'.'.$extension;
+                    $assetUrl = $request->heritage_image->move('public/heritage_image/',$fileNameToStore);
+                    $up->heritage_image = 'heritage_image/'.$fileNameToStore;
+                }
+                $up->banner_video = $request->banner_video;
+                $up->brand_text = $request->brand_text_desc;
+                $up->future_title = $request->future_title;
+                $up->future_text = $request->future_text;
+                $up->future_link = $request->future_link;
+                $up->heritage_tile = $request->heritage_tile;
+                $up->heritage_text = $request->heritage_text;
+                $up->heritage_link = $request->heritage_link;
+                $up->facebook_sr = $request->facebook_sr;
+                $up->facebook = $request->facebook;
+                $up->insta_sr = $request->insta_sr;
+                $up->insta = $request->insta;
+                $up->twitter_sr = $request->twitter_sr;
+                $up->twitter = $request->twitter;
+                $up->youtube_sr = $request->youtube_sr;
+                $up->youtube = $request->youtube;
+                $up->linkdin_sr = $request->linkdin_sr;
+                $up->linkdin = $request->linkdin;
+                $up->page_title = $request->page_title;
+                $up->page_description = $request->page_description;
+                $up->page_keywords = $request->page_keywords;
+                $up->whatsapp_no = $request->whatsapp_no;
+            }else{
+                $up = new Home();
+                if($request->file('logo')){
+                    $extension = $request->logo->getClientOriginalExtension();
+                    $fileNameToStore = time().'.'.$extension;
+                    $assetUrl = $request->logo->move('public/logo/',$fileNameToStore);
+                    $up->logo = 'logo/'.$fileNameToStore;
+                }
+                if($request->file('future_image')){
+                    $extension = $request->future_image->getClientOriginalExtension();
+                    $fileNameToStore = time().'.'.$extension;
+                    $assetUrl = $request->future_image->move('public/future_image/',$fileNameToStore);
+                    $up->future_image = 'future_image/'.$fileNameToStore;
+                }
+                if($request->file('heritage_image')){
+                    $extension = $request->heritage_image->getClientOriginalExtension();
+                    $fileNameToStore = time().'.'.$extension;
+                    $assetUrl = $request->heritage_image->move('public/heritage_image/',$fileNameToStore);
+                    $up->heritage_image = 'heritage_image/'.$fileNameToStore;
+                }
+                $up->banner_video = $request->banner_video;
+                $up->brand_text = $request->brand_text_desc;
+                $up->future_title = $request->future_title;
+                $up->future_text = $request->future_text;
+                $up->future_link = $request->future_link;
+                $up->heritage_tile = $request->heritage_tile;
+                $up->heritage_text = $request->heritage_text;
+                $up->heritage_link = $request->heritage_link;
+                $up->facebook_sr = $request->facebook_sr;
+                $up->facebook = $request->facebook;
+                $up->insta_sr = $request->insta_sr;
+                $up->insta = $request->insta;
+                $up->twitter_sr = $request->twitter_sr;
+                $up->twitter = $request->twitter;
+                $up->youtube_sr = $request->youtube_sr;
+                $up->youtube = $request->youtube;
+                $up->linkdin_sr = $request->linkdin_sr;
+                $up->linkdin = $request->linkdin;
+                $up->page_title = $request->page_title;
+                $up->page_description = $request->page_description;
+                $up->page_keywords = $request->page_keywords;
+                $up->whatsapp_no = $request->whatsapp_no;
+            }
+            $up->save();
+            $this->OurBrands($request);
+            $this->VisionInnovations($request);
+            $this->ServiceSpares($request);
+            $this->SuggestionProducts($request);
+            return redirect()->back()->with('success', 'Saved successfuly');
+        }
+        return view('superadmin/home_page',compact('update','our_brand','our_brand_count','vision_innovation','service_spare','subcategory','suggestion_product','suggestion_product_count'));
+    }
+    public function OurBrands($request){
+        for($i=0;$i < count($request->sr_no);$i++){
+            if(!empty($request->sr_no[$i])){
+                $brand = OurBrand::where('id',@$request->brnd_id[$i])->first();
+                if(!empty($brand)){
+                    $brand->sr_no = $request->sr_no[$i];
+                    $brand->title = $request->brand_title[$i];
+                    if(!empty($request->file('main_image')[$i])){
+                        $extension = $request->main_image[$i]->getClientOriginalExtension();
+                        $fileNameToStore = 'main'.$i.time().'.'.$extension;
+                        $assetUrl = $request->main_image[$i]->move('public/home/',$fileNameToStore);
+                        $brand->main_image = 'home/'.$fileNameToStore;
+                    }
+                    if(!empty($request->file('brand_logo')[$i])){
+                        $extension = $request->brand_logo[$i]->getClientOriginalExtension();
+                        $fileNameToStore = 'brand_logo'.$i.time().'.'.$extension;
+                        $assetUrl = $request->brand_logo[$i]->move('public/home/',$fileNameToStore);
+                        $brand->logo = 'home/'.$fileNameToStore;
+                    }
+                    if(!empty($request->file('sub_img_1')[$i])){
+                        $extension = $request->sub_img_1[$i]->getClientOriginalExtension();
+                        $fileNameToStore = 'sub_img_1'.$i.time().'.'.$extension;
+                        $assetUrl = $request->sub_img_1[$i]->move('public/home/',$fileNameToStore);
+                        $brand->sub_img_1 = 'home/'.$fileNameToStore;
+                    }
+                    if(!empty($request->file('sub_img_2')[$i])){
+                        $extension = $request->sub_img_2[$i]->getClientOriginalExtension();
+                        $fileNameToStore = 'sub_img_2'.$i.time().'.'.$extension;
+                        $assetUrl = $request->sub_img_2[$i]->move('public/home/',$fileNameToStore);
+                        $brand->sub_img_2 = 'home/'.$fileNameToStore;
+                    }
+                    $brand->text = $request->brand_text[$i];
+                    $brand->link = $request->brand_link[$i];
+                    $brand->save();
+                }else{
+                    if(!empty($request->brand_title[$i])){
+                        $brand = new OurBrand();
+                        $brand->sr_no = $request->sr_no[$i];
+                        $brand->title = $request->brand_title[$i];
+                        if(!empty($request->file('main_image')[$i])){
+                            $extension = $request->main_image[$i]->getClientOriginalExtension();
+                            $fileNameToStore = 'main'.$i.time().'.'.$extension;
+                            $assetUrl = $request->main_image[$i]->move('public/home/',$fileNameToStore);
+                            $brand->main_image = 'home/'.$fileNameToStore;
+                        }
+                        if(!empty($request->file('brand_logo')[$i])){
+                            $extension = $request->brand_logo[$i]->getClientOriginalExtension();
+                            $fileNameToStore = 'brand_logo'.$i.time().'.'.$extension;
+                            $assetUrl = $request->brand_logo[$i]->move('public/home/',$fileNameToStore);
+                            $brand->logo = 'home/'.$fileNameToStore;
+                        }
+                        if(!empty($request->file('sub_img_1')[$i])){
+                            $extension = $request->sub_img_1[$i]->getClientOriginalExtension();
+                            $fileNameToStore = 'sub_img_1'.$i.time().'.'.$extension;
+                            $assetUrl = $request->sub_img_1[$i]->move('public/home/',$fileNameToStore);
+                            $brand->sub_img_1 = 'home/'.$fileNameToStore;
+                        }
+                        if(!empty($request->file('sub_img_2')[$i])){
+                            $extension = $request->sub_img_2[$i]->getClientOriginalExtension();
+                            $fileNameToStore = 'sub_img_2'.$i.time().'.'.$extension;
+                            $assetUrl = $request->sub_img_2[$i]->move('public/home/',$fileNameToStore);
+                            $brand->sub_img_2 = 'home/'.$fileNameToStore;
+                        }
+                        $brand->text = $request->brand_text[$i];
+                        $brand->link = $request->brand_link[$i];
+                        $brand->save();
+                    }
+                }
+            }
+        }
+    }
+    public function VisionInnovations($request){
+        for($i=0;$i < count($request->v_id);$i++){
+            if(!empty($request->v_id[$i])){
+                $vision = VisionInnovation::where('id',$request->v_id[$i])->first();
+                $vision->sr_no = $request->v_sr[$i];
+                if(!empty($request->file('v_image')[$i])){
+                    $extension = $request->v_image[$i]->getClientOriginalExtension();
+                    $fileNameToStore = $request->v_id[$i].'main'.$i.time().'.'.$extension;
+                    $assetUrl = $request->v_image[$i]->move('public/home/',$fileNameToStore);
+                    $vision->main_image = 'home/'.$fileNameToStore;
+                }
+                $vision->link = $request->v_link[$i];
+                $vision->save();
+            }
+        }
+    }
+    public function ServiceSpares($request){
+        for($i=0;$i < count($request->s_id);$i++){
+            if(!empty($request->s_id[$i])){
+                $spare = ServiceSpare::where('id',$request->s_id[$i])->first();
+                $spare->sr_no = $request->s_sr[$i];
+                if(!empty($request->file('s_image')[$i])){
+                    $extension = $request->s_image[$i]->getClientOriginalExtension();
+                    $fileNameToStore = $request->s_id[$i].'main'.$i.time().'.'.$extension;
+                    $assetUrl = $request->s_image[$i]->move('public/home/',$fileNameToStore);
+                    $spare->main_image = 'home/'.$fileNameToStore;
+                }
+                $spare->title = $request->s_title[$i];
+                $spare->description = $request->s_description[$i];
+                $spare->link = $request->s_link[$i];
+                $spare->save();
+            }
+        }
+    }
+    public function SuggestionProducts($request){
+        for($i=0;$i < count($request->sugg_title);$i++){
+            if(!empty($request->sugg_title[$i])){
+                $sugg = SuggestionProduct::where('id',@$request->sugg_id[$i])->first();
+                if(!empty($sugg)){
+                    $sugg->sr_no = $request->sugg_sr_no[$i];
+                    $sugg->title = $request->sugg_title[$i];
+                    $sugg->product_id = $request->product_id[$i];
+                    $sugg->sku = $request->sku[$i];
+                    $sugg->save();
+                }else{
+                    $sugg = new SuggestionProduct();
+                    $sugg->user_id = Auth::user()->id;
+                    $sugg->sr_no = $request->sugg_sr_no[$i];
+                    $sugg->title = $request->sugg_title[$i];
+                    $sugg->product_id = $request->product_id[$i];
+                    $sugg->sku = $request->sku[$i];
+                    $sugg->save();
+                }
+            }
+        }
+    }
+    public function HomeBrand($id){
+        OurBrand::where('id',$id)->delete();
+        return redirect()->back()->with('success', 'Deleted successfuly');
+    }
+    public function BetterTogetherProduct(Request $request){
+        $result=[];
+        return view('superadmin/better_together_product',compact('result'));
+    }
+    public function Tickets(){ 
+        $result=[];
+        return view('superadmin/tickets',compact('result'));
+    }
+    public function ViewOrder(){
+        $result=[];
+        return view('superadmin/view_order',compact('result'));
+    }
+    public function OrderReports(){
+        $result=[];
+        return view('superadmin/order_reports',compact('result'));
     }
 }
